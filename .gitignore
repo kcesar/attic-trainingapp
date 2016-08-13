@@ -1,0 +1,8 @@
+**/wwwroot/lib/*/**/*
+**/bin/**/*
+**/obj/**/*
+**/node_modules/**
+*.user
+*.suo
+
+log-*.txt

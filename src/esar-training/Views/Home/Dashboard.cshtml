@@ -1,0 +1,9 @@
+﻿@{
+  ViewData["Title"] = "Home";
+}
+
+<p>Welcome back, @User.Claims.FirstOrDefault(f => f.Type == "name")?.Value</p>
+<div layout="column" layout-align="center stretch" style="max-width:700px">
+  Here are the things you can do:
+</div>
+
