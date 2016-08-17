@@ -2,8 +2,64 @@
   ViewData["Title"] = "Home";
 }
 
-<p>Welcome back, @User.Claims.FirstOrDefault(f => f.Type == "name")?.Value</p>
-<div layout="column" layout-align="center stretch" style="max-width:700px">
-  Here are the things you can do:
+<div ng-controller="MeCtrl" @*data-auth="@ViewBag.AccessToken" data-member="@ViewBag.MemberId"*@ layout="column" flex layout-fill class="ng-cloak">
+  <md-content flex>
+    <section>
+      <md-subheader class="md-primary">Personal Information</md-subheader>
+      <md-list flex>
+        <md-list-item class="md-3-line" ng-repeat="task in tasks | filter: { category: 'personal' } | filter: completedFilter(false)" ng-click="null">
+          <!-- <img ng-src="{{message.face}}" class="md-avatar" alt="{{message.who}}"> -->
+          <div class="md-list-item-text">
+            <h3>{{task.title}} {{task.progress}}</h3>
+            <h4>SubTItle</h4>
+            <p>
+              These are some notes. Aren't they nifty?
+            </p>
+          </div>
+        </md-list-item>
+      </md-list>
+    </section>
+    <section>
+      <md-subheader class="md-primary">Available Tasks</md-subheader>
+      <md-list flex>
+        <md-list-item class="md-3-line" ng-repeat="task in tasks | filter: { category: '!personal', blocked: false } | filter: completedFilter(false)" ng-click="null">
+          <div class="md-list-item-text">
+            <h3>{{task.title}} {{task.progress}}</h3>
+            <h4>SubTItle</h4>
+            <p>
+              These are some notes. Aren't they nifty?
+            </p>
+          </div>
+        </md-list-item>
+      </md-list>
+    </section>
+    <section>
+      <md-subheader class="md-primary">Blocked Tasks</md-subheader>
+      <md-list flex class="md-dense">
+        <md-list-item class="md-3-line" ng-repeat="task in tasks | filter: { category: '!personal', blocked: true } | filter: completedFilter(false)" ng-click="null">
+          <div class="md-list-item-text">
+            <h3>{{task.title}} {{task.progress}}</h3>
+            <h4>SubTItle</h4>
+            <p>
+              These are some notes. Aren't they nifty?
+            </p>
+          </div>
+        </md-list-item>
+      </md-list>
+    </section>
+    <section>
+      <md-subheader class="md-primary">Completed Tasks</md-subheader>
+      <md-list flex>
+        <md-list-item class="md-3-line" ng-repeat="task in tasks | filter: completedFilter(true)" ng-click="null">
+          <div class="md-list-item-text">
+            <h3>{{task.title}} {{task.progress}}</h3>
+            <h4>SubTItle</h4>
+            <p>
+              These are some notes. Aren't they nifty?
+            </p>
+          </div>
+        </md-list-item>
+      </md-list>
+    </section>
+  </md-content>
 </div>
-

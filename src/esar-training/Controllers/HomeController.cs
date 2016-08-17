@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Kcesar.Training.Website.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -31,6 +29,13 @@ namespace Kcesar.Training.Website.Controllers
     {
       return View();
     }
+
+    [HttpGet("me")]
+    public IActionResult Dashboard()
+    {
+      return View();
+    }
+
 
     [HttpGet("signup")]
     public IActionResult Signup()
@@ -168,23 +173,6 @@ namespace Kcesar.Training.Website.Controllers
       }
       var tokenSet = JsonConvert.DeserializeObject<JObject>(responseJson);
       return tokenSet["access_token"].Value<string>();
-    }
-
-    [Authorize]
-    [HttpGet("home/contact")]
-    public IActionResult Contact()
-    {
-      var env = Environment.GetEnvironmentVariables();
-      ViewData["Message"] = "Your contact page." + string.Join("<br/>", User.Claims.Select(f => f.Type + ": " + f.Value));// + "<br>" + string.Join("<br>", env.Keys.Cast<string>().Select(f => f + ":: " + env[f]));
-
-      return View();
-    }
-
-    [Authorize]
-    [HttpGet("me")]
-    public IActionResult Dashboard()
-    {
-      return View();
     }
 
     [HttpGet("home/error")]

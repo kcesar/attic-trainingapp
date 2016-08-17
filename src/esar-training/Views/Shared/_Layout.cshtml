@@ -34,14 +34,31 @@
         </h2>
       </div>
     </md-toolbar>
-    <md-content layout="column" flex="noshrink" id="content">
+    <md-content layout="column" flex id="content">
       @RenderBody()
 
+      <div style="margin:0 auto; padding: 5px; font-size: 90%">&copy; 2016 - This project is open source. View it on <a href="https://github.com/mcosand/esar-training">GitHub</a></div>
     </md-content>
-    <div style="margin:0 auto; padding: 5px; font-size: 90%">&copy; 2016 - This project is open source. View it on <a href="https://github.com/mcosand/esar-training">GitHub</a></div>
     </div>
 
-  <script>var appRoot = '@Url.Content("~/").TrimEnd('/')'; var databaseRoot = '@(_config["apis:database:root"].TrimEnd('/'))'; var authApi = '@(_config["auth:authority"].TrimEnd('/'))';</script>
+  <script>var appRoot = '@Url.Content("~/").TrimEnd('/')'; var databaseRoot = '@(_config["apis:database:root"].TrimEnd('/'))'; var authApi = '@(_config["auth:authority"].TrimEnd('/'))';
+    var oidcSettings = {
+      authority: '@_config["auth:authority"].TrimEnd('/')',
+      client_id: '@_config["auth:client_id"]',
+      redirect_uri: location.href.replace(location.hash, ""),
+      post_logout_redirect_uri: 'http://localhost:5000/user-manager-sample.html',
+      response_type: 'id_token token',
+      scope: '@_config["auth:scopes"]',
+
+     // popup_redirect_uri: 'http://localhost:5000/user-manager-sample-popup.html',
+
+     // silent_redirect_uri: 'http://localhost:5000/user-manager-sample-silent.html',
+      automaticSilentRenew: true,
+
+      filterProtocolClaims: true,
+      loadUserInfo: true
+    };
+  </script>
   <environment names="Development">
     <script src="~/lib/angular/angular.js"></script>
     <script src="~/lib/angular-animate/angular-animate.js"></script>
@@ -50,6 +67,7 @@
     <script src="~/lib/angular-material/angular-material.js"></script>
     <script src="~/lib/angular-jk-carousel/dist/jk-carousel.js"></script>
     <script src="~/lib/moment/moment.js"></script>
+    <script src="~/lib/oidc-client/dist/oidc-client.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
   </environment>
   <environment names="Staging,Production">
@@ -60,6 +78,7 @@
     <script src="//ajax.googleapis.com/ajax/libs/angular_material/1.0.9/angular-material.min.js"></script>
     <script src="~/lib/angular-jk-carousel/dist/jk-carousel.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+    <script src="~/lib/oidc-client/dist/oidc-client.min.js"></script>
     <script src="~/js/site.min.js" asp-append-version="true"></script>
   </environment>
   @RenderSection("scripts", required: false)
