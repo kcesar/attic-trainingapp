@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>@ViewData["Title"] - King County ESAR</title>
 
+  <base href="@Url.Content("/")" />
   <environment names="Development">
     <link rel="stylesheet" href="~/lib/angular-material/angular-material.css" />
     <link rel="stylesheet" href="~/lib/angular-jk-carousel/dist/jk-carousel.css" />
@@ -69,6 +70,7 @@
     <script src="~/lib/moment/moment.js"></script>
     <script src="~/lib/oidc-client/dist/oidc-client.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/me-ctrl.js" asp-append-version="true"></script>
   </environment>
   <environment names="Staging,Production">
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>

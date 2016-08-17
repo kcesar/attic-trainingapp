@@ -2,62 +2,45 @@
   ViewData["Title"] = "Home";
 }
 
-<div ng-controller="MeCtrl" @*data-auth="@ViewBag.AccessToken" data-member="@ViewBag.MemberId"*@ layout="column" flex layout-fill class="ng-cloak">
+<script type="text/ng-template" id="/listItem.tpl">
+  <!-- <img ng-src="{{message.face}}" class="md-avatar" alt="{{message.who}}"> -->
+  <div class="md-list-item-text">
+    <h3>{{task.title}}{{task.tester ? (task.progress ? (task.progress == 1 ? ' - In Progress' : ' - Done') : '') : ''}}</h3>
+    <p>{{task.summary}}</p>
+  </div>
+</script>
+<div ng-controller="MeCtrl" layout="column" flex layout-fill class="ng-cloak">
+  <p style="padding-left:16px" ng-show="data.user.id != authMemberId">{{data.user.name}}</p>
   <md-content flex>
     <section>
       <md-subheader class="md-primary">Personal Information</md-subheader>
       <md-list flex>
-        <md-list-item class="md-3-line" ng-repeat="task in tasks | filter: { category: 'personal' } | filter: completedFilter(false)" ng-click="null">
-          <!-- <img ng-src="{{message.face}}" class="md-avatar" alt="{{message.who}}"> -->
-          <div class="md-list-item-text">
-            <h3>{{task.title}} {{task.progress}}</h3>
-            <h4>SubTItle</h4>
-            <p>
-              These are some notes. Aren't they nifty?
-            </p>
-          </div>
+        <md-list-item class="md-2-line" ng-repeat="task in tasks | filter: { category: 'personal' } | filter: completedFilter(false)" aria-label="{{'Task: ' + task.title}}" ng-click="null">
+          <ng-include src="'/listItem.tpl'"></ng-include>
         </md-list-item>
       </md-list>
     </section>
     <section>
       <md-subheader class="md-primary">Available Tasks</md-subheader>
       <md-list flex>
-        <md-list-item class="md-3-line" ng-repeat="task in tasks | filter: { category: '!personal', blocked: false } | filter: completedFilter(false)" ng-click="null">
-          <div class="md-list-item-text">
-            <h3>{{task.title}} {{task.progress}}</h3>
-            <h4>SubTItle</h4>
-            <p>
-              These are some notes. Aren't they nifty?
-            </p>
-          </div>
+        <md-list-item class="md-2-line" ng-repeat="task in tasks | filter: { category: '!personal', blocked: false } | filter: completedFilter(false)" aria-label="{{'Task: ' + task.title}}" ng-click="null">
+          <ng-include src="'/listItem.tpl'"></ng-include>
         </md-list-item>
       </md-list>
     </section>
     <section>
       <md-subheader class="md-primary">Blocked Tasks</md-subheader>
-      <md-list flex class="md-dense">
-        <md-list-item class="md-3-line" ng-repeat="task in tasks | filter: { category: '!personal', blocked: true } | filter: completedFilter(false)" ng-click="null">
-          <div class="md-list-item-text">
-            <h3>{{task.title}} {{task.progress}}</h3>
-            <h4>SubTItle</h4>
-            <p>
-              These are some notes. Aren't they nifty?
-            </p>
-          </div>
+      <md-list flex>
+        <md-list-item class="md-2-line" ng-repeat="task in tasks | filter: { category: '!personal', blocked: true } | filter: completedFilter(false)" aria-label="{{'Task: ' + task.title}}" ng-click="null">
+          <ng-include src="'/listItem.tpl'"></ng-include>
         </md-list-item>
       </md-list>
     </section>
     <section>
       <md-subheader class="md-primary">Completed Tasks</md-subheader>
       <md-list flex>
-        <md-list-item class="md-3-line" ng-repeat="task in tasks | filter: completedFilter(true)" ng-click="null">
-          <div class="md-list-item-text">
-            <h3>{{task.title}} {{task.progress}}</h3>
-            <h4>SubTItle</h4>
-            <p>
-              These are some notes. Aren't they nifty?
-            </p>
-          </div>
+        <md-list-item class="md-2-line" ng-repeat="task in tasks | filter: completedFilter(true)" aria-label="{{'Task: ' + task.title}}" ng-click="null">
+          <ng-include src="'/listItem.tpl'"></ng-include>
         </md-list-item>
       </md-list>
     </section>
