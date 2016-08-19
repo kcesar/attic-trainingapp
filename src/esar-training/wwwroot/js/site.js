@@ -90,7 +90,7 @@ angular.module('esarTraining').directive('serverError', function () {
   return {
     require: 'ngModel',
     link: function ($scope, element, attrs, ngModel) {
-      ngModel.$asyncValidators.data.usernameAvailable = function (username) {
+      ngModel.$asyncValidators.usernameAvailable = function (username) {
         var defer = $q.defer();
         $http.get(authApi + '/checkusername/' + encodeURIComponent(username)).then(function (response) {
           console.log(response.data);
@@ -121,7 +121,7 @@ angular.module('esarTraining').directive('serverError', function () {
     },
     postSignup: function () {
       s.signupForm.$pending = true;
-      $http.post(appRoot + '/signup', s.data.user).then(
+      $http.post(appRoot + '/signup', s.user).then(
         function (response) {
           $window.location.href = appRoot + '/me';
         },
