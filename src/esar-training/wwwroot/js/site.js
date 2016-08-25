@@ -1,5 +1,5 @@
 ﻿angular.module('esarTraining', ['ngMessages', 'ngMaterial', 'jkAngularCarousel'])
-  .config(['$mdThemingProvider', '$mdDateLocaleProvider', '$locationProvider', function ($mdThemingProvider, $mdDateLocaleProvider, $locationProvider) {
+  .config(['$mdThemingProvider', '$mdDateLocaleProvider', function ($mdThemingProvider, $mdDateLocaleProvider) {
     //http://mcg.mbitson.com/
     $mdThemingProvider.definePalette('sar-yellow', {
       '50': '#ffffff',
@@ -47,10 +47,17 @@
       var m = moment(dateString, ['YYYY-MM-DD', 'M/D/YYYY'], true)
       return m.isValid() ? m.toDate() : new Date(NaN);
     }
-
-    $locationProvider.html5Mode(true);
   }]);
 
+function getParameterByName(name, url) {
+  if (!url) url = window.location.href;
+  name = name.replace(/[\[\]]/g, "\\$&");
+  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+      results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
 
 angular.module('esarTraining').directive('serverError', function () {
   return {

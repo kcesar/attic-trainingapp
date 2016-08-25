@@ -1,4 +1,4 @@
-﻿angular.module('esarTraining').controller('MeCtrl', ['$scope', '$location', '$http', '$mdPanel', function ($scope, $location, $http, $mdPanel) {
+﻿angular.module('esarTraining').controller('MeCtrl', ['$scope', '$http', '$mdPanel', function ($scope, $http, $mdPanel) {
   var s = $scope;
 
   function finishLogin() {
@@ -169,7 +169,8 @@
     })},
     load: function (user) {
       _loadingPanel.open();
-      s.data.user.id = $location.search().memberId ? $location.search().memberId : user.profile.memberId;
+      var altMemberId = getParameterByName("memberId");
+      s.data.user.id = altMemberId ? altMemberId : user.profile.memberId;
       s.access_token = user.access_token;
       s.authMemberId = user.profile.memberId;
       return s.loadMember()
