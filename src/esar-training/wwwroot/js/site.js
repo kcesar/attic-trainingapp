@@ -115,9 +115,14 @@ angular.module('esarTraining').directive('serverError', function () {
 .controller('SignupCtrl', ['$scope', '$http', '$window', '$mdDialog', function ($scope, $http, $window, $mdDialog) {
   var s = $scope;
 
-  angular.extend($scope, {
-    user: {
+  var ageCut = new Date();
+  ageCut.setFullYear(ageCut.getFullYear() - 13);
 
+  angular.extend($scope, {
+    minBirth: new Date(1900, 1, 1),
+    maxBirth: ageCut,
+    user: {
+      birthdate: null
     },
     postSignup: function () {
       s.signupForm.$pending = true;

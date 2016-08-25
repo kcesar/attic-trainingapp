@@ -38,8 +38,13 @@
             </md-input-container>
           </div>
           <div layout="row">
-            <md-datepicker ng-model="user.birthdate" md-placeholder="Birth date" required>
+            <md-datepicker name="birthdate" ng-model="user.birthdate" md-placeholder="Birth date" required md-min-date="minBirth" md-max-date="maxBirth" md-open-on-focus>
             </md-datepicker>
+            <div ng-messages="signupForm.birthdate.$error" ng-if="signupForm.birthdate.$touched">
+              <div ng-message="required">Required</div>
+              <div ng-message="minDate">Must be 3 or more characters</div>
+              <div ng-message="maxDate">Too long</div>
+            </div>
           </div>
           <div layout="row">
             <md-input-container class="md-block" flex="50" flex-gt-xs="20">
