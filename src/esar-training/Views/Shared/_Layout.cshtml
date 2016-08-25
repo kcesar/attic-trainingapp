@@ -1,4 +1,5 @@
 ﻿@inject Microsoft.Extensions.Configuration.IConfigurationRoot _config
+@inject Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnv
 <!DOCTYPE html>
 <html>
 <head>
@@ -42,7 +43,8 @@
     </md-content>
     </div>
 
-  <script>var appRoot = '@Url.Content("~/").TrimEnd('/')'; var databaseRoot = '@(_config["apis:database:root"].TrimEnd('/'))'; var authApi = '@(_config["auth:authority"].TrimEnd('/'))';
+  <script>
+var appRoot = '@Url.Content("~/").TrimEnd('/')'; var databaseRoot = '@(_config["apis:database:root"].TrimEnd('/'))'; var authApi = '@(_config["auth:authority"].TrimEnd('/'))';
     var oidcSettings = {
       authority: '@_config["auth:authority"].TrimEnd('/')',
       client_id: '@_config["auth:client_id"]',
@@ -81,8 +83,13 @@
     <script src="~/lib/angular-jk-carousel/dist/jk-carousel.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
     <script src="~/lib/oidc-client/dist/oidc-client.min.js"></script>
+    <script type="text/javascript">window._trackJs = { token: 'efc00a2078b0462aa24df20c1b971687' };</script>
+    <script type="text/javascript" src="https://cdn.trackjs.com/releases/current/tracker.js"></script>
     <script src="~/js/site.min.js" asp-append-version="true"></script>
   </environment>
   @RenderSection("scripts", required: false)
+  @if (!string.IsNullOrWhiteSpace(_config["ai:key"]))
+  { <script type="text/javascript">var ai_settings = { enableDebug: @((hostingEnv.EnvironmentName == "Development").ToString().ToLowerInvariant()), instrumentationKey : '@_config["ai:key"]', disableExceptionTracking: false };</script>
+  <script src="~/js/ai-metrics.js"></script> }
 </body>
 </html>

@@ -23,6 +23,7 @@ namespace esar_training
           .SetBasePath(env.ContentRootPath)
           .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
           .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+          .AddJsonFile($"appsettings.local.json", optional: true)
           .AddEnvironmentVariables();
       Configuration = builder.Build();
     }

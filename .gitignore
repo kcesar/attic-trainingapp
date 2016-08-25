@@ -6,3 +6,4 @@
 *.suo
 
 log-*.txt
+appsettings.local.json
