@@ -160,10 +160,10 @@
       s.data.user = response.data;
       s.$pending = false;
     })},
-    loadTraining: function () { return loadData('/members/' + s.data.user.id + '/trainingrecords', function(response) {
+    loadTraining: function () { return loadData('/members/' + s.data.user.id + '/training/records', function(response) {
       s.data.trainingRecords = {};
-      for (var i = 0; i < response.data.length; i++) {
-        s.data.trainingRecords[response.data[i].course.name] = response.data[i];
+      for (var i = 0; i < response.data.items.length; i++) {
+        s.data.trainingRecords[response.data.items[i].course.name] = response.data.items[i];
       }
       s.$pending = false;
     })},

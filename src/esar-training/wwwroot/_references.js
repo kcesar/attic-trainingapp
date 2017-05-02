@@ -1,4 +1,5 @@
 ﻿/// <autosync enabled="true" />
+/// <reference path="js/ai-metrics.js" />
 /// <reference path="js/me-ctrl.min.js" />
 /// <reference path="js/site.js" />
 /// <reference path="lib/angular/angular.js" />
