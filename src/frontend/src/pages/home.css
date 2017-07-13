@@ -1,0 +1,11 @@
+.content {width:800px; margin:auto; padding-top: 15px}
+
+.slick-prev:before, .slick-next:before {
+  color: rgba(0,0,0,.2)
+}
+.slick-slider {
+  margin-bottom: 40px;
+}
+.slick-slide img {
+  height: 400px;
+}

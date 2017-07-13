@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "ESAR Training",
+  "name": "King County ESAR Training Portal",
   "icons": [
     {
       "src": "favicon.ico",
