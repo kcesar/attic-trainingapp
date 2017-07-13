@@ -5,6 +5,7 @@
 *.user
 *.suo
 
+/src/esar-training/wwwroot
 /src/frontend/coverage
 /src/frontend/build
 

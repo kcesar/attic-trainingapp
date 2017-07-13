@@ -5,11 +5,13 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Kcesar.Training.Website.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.IO;
 
 namespace Kcesar.Training.Website.Controllers
 {
@@ -17,23 +19,37 @@ namespace Kcesar.Training.Website.Controllers
   {
     private readonly IConfigurationRoot _config;
     private readonly ILogger _logger;
+    private readonly string _webRoot;
 
-    public HomeController(IConfigurationRoot config, ILogger<HomeController> logger)
+    public HomeController(IConfigurationRoot config, ILogger<HomeController> logger, IHostingEnvironment env)
     {
       _config = config;
       _logger = logger;
+      _webRoot = env.WebRootPath;
+    }
+
+    static string reactHtml = null;
+    static object reactLock = new object();
+    string GetReactHtml()
+    {
+      if (reactHtml == null)
+      {
+        lock (reactLock)
+        {
+          if (reactHtml == null)
+          {
+            reactHtml = System.IO.File.ReadAllText(Path.Combine(_webRoot, "index.html")).Replace("<head>", $"<head><base href=\"{Url.Content("~/")}\"/>");
+          }
+        }
+      }
+      return reactHtml;
     }
 
     [HttpGet("")]
-    public IActionResult Index()
-    {
-      return View();
-    }
-
     [HttpGet("me")]
-    public IActionResult Dashboard()
+    public IActionResult React()
     {
-      return View();
+      return Content(GetReactHtml(), "text/html");
     }
 
 
@@ -125,7 +141,7 @@ namespace Kcesar.Training.Website.Controllers
         });
 
       //client.PostAsync()
-//      throw new Exception("Shouldn't work yet");
+      //throw new Exception("Shouldn't work yet");
       return new { status = "OK" };
     }
 
