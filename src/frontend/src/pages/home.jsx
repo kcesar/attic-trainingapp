@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import RaisedButton from 'material-ui/RaisedButton'
 import Carousel from 'react-slick'
 
 import 'slick-carousel/slick/slick.css'
@@ -14,11 +13,6 @@ import Image3 from '../assets/in-the-woods.jpg'
 import Image4 from '../assets/litter-wheel.jpg'
 
 class HomePage extends Component {
-  componentWillMount() {
-    const { doIt } = this.props;
-    doIt();
-  }
-
   render() {
     const carouselSettings = {
       dots: true,
@@ -28,30 +22,31 @@ class HomePage extends Component {
     }
 
     return (
-      <div className='content'>
-      <div className='content'>
-  <div className='sliderContainer'>
-    <Carousel {...carouselSettings} settings={carouselSettings}>
-      <div><img src={Image1} alt="Trainees and staff" /></div>
-      <div><img src={Image2} alt="Practicing an evacuation" /></div>
-      <div><img src={Image3} alt="Searching in the woods" /></div>
-      <div><img src={Image4} alt="Working with a wheeled litter (stretcher)" /></div>
-    </Carousel>
-    </div>
-      <p>
-        Welcome to King County Explorer Search and Rescue's (ESAR's) basic training program. Our series of trainings will
-        cover everything necessary to start participating in search and rescue missions in King County and across Washington
-        State. Previous training in search and rescue techniques is not required and we'll cover the basics of outdoor travel,
-        navigation and first aid.</p>
-      <p>In order to participate in our training please use the sign up form and start tracking your progress.</p>
-      <div style={{display:'flex', flexDirection:'row', justifyContent:'center', alignContent:'stretch', width:'800px'}}>
-        <RaisedButton label="Existing Trainees" href="/me" primary={true} style={{display:'flex', flex: '1 1 0%', margin:'0 10px'}} />
-        <RaisedButton label="Sign up" href="/signup" style={{display:'flex', flex: '1 1 0%', margin:'0 10px'}} />
+      <div className='py-4'>
+        <div className='row'>
+          <div className='sliderContainer col'>
+            <Carousel {...carouselSettings} settings={carouselSettings}>
+              <div><img src={Image1} alt="Trainees and staff" /></div>
+              <div><img src={Image2} alt="Practicing an evacuation" /></div>
+              <div><img src={Image3} alt="Searching in the woods" /></div>
+              <div><img src={Image4} alt="Working with a wheeled litter (stretcher)" /></div>
+            </Carousel>
+          </div>
+        </div>
+        <div className='row'>
+          <div className='col'>
+            <p>Welcome to King County Explorer Search and Rescue's (ESAR's) basic training program. Our series of trainings will
+            cover everything necessary to start participating in search and rescue missions in King County and across Washington
+            State. Previous training in search and rescue techniques is not required and we'll cover the basics of outdoor travel,
+            navigation and first aid.</p>
+            <p>In order to participate in our training please use the sign up form and start tracking your progress.</p>
+          </div>
+        </div>
+        <div className='row justify-content-around'>
+          <a href="/me" className='btn btn-primary col-11 col-sm-4 my-2'>Existing Trainees</a>
+          <a href="/signup" className='btn btn-outline-primary col-11 col-sm-4 my-2'>Sign Up</a>
+        </div>
       </div>
-    </div>
-  </div>
-
- 
     );
   }
 }
@@ -64,7 +59,6 @@ const storeToProps = (store) => {
 
 const dispatchToProps = (dispatch, ownProps) => {
   return {
-    doIt: () => dispatch({type: 'MY_ACTION'})
   }
 }
 

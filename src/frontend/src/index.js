@@ -10,8 +10,10 @@ import { loadUser, OidcProvider } from 'redux-oidc'
 
 import axios from 'axios'
 
-import './index.css';
-import App from './App';
+import './assets/bootstrap.min.css'
+import './index.css'
+
+import App from './App'
 import registerServiceWorker from './registerServiceWorker'
 import store, { history } from './store'
 import userManager from './user-manager'
@@ -29,10 +31,15 @@ const router = (
   <ConnectedRouter history={history} basename={baseUrl}>
     <div>
       <Route path={baseUrl} component={App} />
-      <Route exact path={baseUrl + "loggedIn"} component={LoggedInPage} />
-      <Route exact path={baseUrl} component={HomePage}/>
-      <Route exact path={baseUrl + "me"} component={TraineePage} />
-      <Route exact path={baseUrl + "signup"} component={SignupPage} />
+      <div className='container'>
+        <Route exact path={baseUrl + "loggedIn"} component={LoggedInPage} />
+        <Route exact path={baseUrl} component={HomePage}/>
+        <Route exact path={baseUrl + "me"} component={TraineePage} />
+        <Route exact path={baseUrl + "signup"} component={SignupPage} />
+        <div className='row justify-content-center'>
+          <div style={{margin:'0 auto', textAlign:'center', padding: '5px', fontSize: '90%'}}>© 2017 - This project is open source. View it on <a href="https://github.com/kcesar/esar-training">GitHub</a></div>
+        </div>
+      </div>
     </div>
   </ConnectedRouter>
 )
