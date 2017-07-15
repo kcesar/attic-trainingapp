@@ -19,6 +19,7 @@ import userManager from './user-manager'
 import HomePage from './pages/home'
 import TraineePage from './pages/trainee'
 import LoggedInPage from './pages/logged-in'
+import SignupPage from './pages/signup'
 
 injectTapEventPlugin()
 
@@ -31,6 +32,7 @@ const router = (
       <Route exact path={baseUrl + "loggedIn"} component={LoggedInPage} />
       <Route exact path={baseUrl} component={HomePage}/>
       <Route exact path={baseUrl + "me"} component={TraineePage} />
+      <Route exact path={baseUrl + "signup"} component={SignupPage} />
     </div>
   </ConnectedRouter>
 )

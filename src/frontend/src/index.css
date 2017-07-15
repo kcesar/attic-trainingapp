@@ -12,3 +12,13 @@ body {
 h4.dialog-subtitle:first-child {
   margin-top: 0px;
 }
+
+.layout-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.layout-col {
+  display: flex;
+  flex-direction: column;
+}
