@@ -1,9 +1,14 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  font-family: Roboto, sans-serif;
+  font-size: 16px;
 }
 
 .slick-slide {
   height: 400px
+}
+
+h4.dialog-subtitle:first-child {
+  margin-top: 0px;
 }

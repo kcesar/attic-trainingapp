@@ -32,10 +32,10 @@ class HomePage extends Component {
       <div className='content'>
   <div className='sliderContainer'>
     <Carousel {...carouselSettings} settings={carouselSettings}>
-      <div><img src={Image1} /></div>
-      <div><img src={Image2} /></div>
-      <div><img src={Image3} /></div>
-      <div><img src={Image4} /></div>
+      <div><img src={Image1} alt="Trainees and staff" /></div>
+      <div><img src={Image2} alt="Practicing an evacuation" /></div>
+      <div><img src={Image3} alt="Searching in the woods" /></div>
+      <div><img src={Image4} alt="Working with a wheeled litter (stretcher)" /></div>
     </Carousel>
     </div>
       <p>

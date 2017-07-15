@@ -1,39 +1,34 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import * as actions from '../actions'
 
-import { List, ListItem, Subheader } from 'material-ui'
+import AuthRequired from '../components/auth-required'
+import TaskList from '../components/task-list'
 
 class TraineePage extends Component {
-  componentWillMount() {
-    const { doIt } = this.props;
-    doIt();
-  }
-
   render() {
+    const { user } = this.props
     return (
-      <div>
-      <List>
-        <Subheader>Personal Information</Subheader>
-        <ListItem primaryText='Contact Information' secondaryText='Address, Email, Phone number' insetChildren={true} />
-        <ListItem primaryText='Emergency Contacts' secondaryText='Who to call in an emergency' insetChildren={true} />
-        <Subheader>Available Tasks</Subheader>      
-        <Subheader>Blocked Tasks</Subheader>
-        <Subheader>Completed Tasks</Subheader>
-      </List>
-      </div>
+      <AuthRequired user={user}>
+      <div>{(user && user.profile) ? user.profile.name : ''}</div>
+      <TaskList {...this.props} />
+      </AuthRequired>
     );
   }
 }
 
 const storeToProps = (store) => {
   return {
-    route: store.routing
+    user: store.oidc ? store.oidc.user : undefined,
+    tasks: store.tasks,
+    records: store.records,
+    progress: store.progress
   }
 }
 
 const dispatchToProps = (dispatch, ownProps) => {
   return {
-    doIt: () => dispatch({type: 'MY_ACTION'})
+    getUserData: () => dispatch(actions.getUserData())
   }
 }
 

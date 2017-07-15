@@ -3,9 +3,16 @@ import thunkMiddleware from 'redux-thunk'
 import { createLogger } from 'redux-logger'
 import { createBrowserHistory } from 'history'
 import { routerReducer as routing, routerMiddleware } from 'react-router-redux'
+import { reducer as oidc } from 'redux-oidc'
+
 
 const defaultState = {
-  routing: {}
+  oidc: { user: Object.keys(sessionStorage).filter(function(i) { return i.startsWith('oidc.user')}).length ? {} : null},
+  routing: {},
+  config: {
+    localRoot: '/api',
+    remoteRoot: 'http://localhost:4944/api2'
+  }
 }
 
 export const history = createBrowserHistory()
@@ -21,7 +28,9 @@ if(process.env.NODE_ENV === 'development' || (localStorage && localStorage.showL
 }
 
 const rootReducer = combineReducers({
-  routing
+  routing,
+  oidc,
+  config: function tasksReducer(state = [], action) { return state }
 })
 
 

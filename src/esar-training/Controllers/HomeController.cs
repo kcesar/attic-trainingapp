@@ -38,7 +38,7 @@ namespace Kcesar.Training.Website.Controllers
         {
           if (reactHtml == null)
           {
-            reactHtml = System.IO.File.ReadAllText(Path.Combine(_webRoot, "index.html")).Replace("<head>", $"<head><base href=\"{Url.Content("~/")}\"/>");
+            reactHtml = System.IO.File.ReadAllText(Path.Combine(_webRoot, "index.html")).Replace("<head>", $"<head><base href=\"{Url.Content("~/")}\"/><script>window.baseUrl = \"{Url.Content("~/")}\";</script>");
           }
         }
       }
