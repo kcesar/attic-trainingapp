@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Button, Form, FormGroup, Label, Input, FormText, InputGroup, InputGroupButton } from 'reactstrap';
+import { FormGroup, Label, Input } from 'reactstrap';
 import Step from '../components/step'
 import moment from 'moment'
 import momentLocalizer from 'react-widgets/lib/localizers/moment'
@@ -49,8 +49,6 @@ class SignupPage extends Component {
   }
 
   render() {
-    const { user } = this.props
-    const maxBirthday = moment().subtract(13, 'years').toDate()
     const thisYear = moment().year()
     return (
       <div className='container-fluid py-4'>

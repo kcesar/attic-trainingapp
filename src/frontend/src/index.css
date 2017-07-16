@@ -21,6 +21,21 @@ html, body {
   padding: .75rem 1rem;
 }
 
+ul.list-group>button {
+  flex-direction: column;
+  align-items: flex-start;
+  cursor: pointer;
+}
+ul.indent.list-group {
+  padding-left: 25px;
+}
+ul.list-group .h5 {
+  font-size:16px;
+}
+ul.list-group p:last-child {
+  margin-bottom:0;
+}
+
 .navbar {
   padding: .5rem 1rem;
 }
@@ -38,9 +53,10 @@ button.nav-link {
   border-width: 0px;
 }
 
-
 .bg-primary, .btn-primary, .btn-outline-primary:hover {
   background-color: #008d23 !important; /*#2196F3;*/
+  background-image: none;
+  border-color:#008d23;
 }
 .btn-outline-primary:hover {
   border-color: #008d23; /*#2196F3;*/

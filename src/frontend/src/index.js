@@ -4,8 +4,6 @@ import ReactDOM from 'react-dom'
 import { Route } from 'react-router'
 import { ConnectedRouter } from 'react-router-redux'
 import { Provider } from 'react-redux'
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import injectTapEventPlugin from 'react-tap-event-plugin'
 import { loadUser, OidcProvider } from 'redux-oidc'
 
 import axios from 'axios'
@@ -23,8 +21,6 @@ import HomePage from './pages/home'
 import TraineePage from './pages/trainee'
 import LoggedInPage from './pages/logged-in'
 import SignupPage from './pages/signup'
-
-injectTapEventPlugin()
 
 const baseUrl = window.baseUrl || '/'
 
@@ -57,13 +53,11 @@ axios.interceptors.request.use(config => {
 loadUser(store, userManager)
 
 ReactDOM.render(
-  <MuiThemeProvider>
-    <Provider store={store}>
-      <OidcProvider store={store} userManager={userManager}>
-        {router}
-      </OidcProvider>
-    </Provider>
-  </MuiThemeProvider>
+  <Provider store={store}>
+    <OidcProvider store={store} userManager={userManager}>
+      {router}
+    </OidcProvider>
+  </Provider>
  , document.getElementById('root'));
 registerServiceWorker();
 

@@ -9,10 +9,12 @@ class TraineePage extends Component {
   render() {
     const { user } = this.props
     return (
-      <AuthRequired user={user}>
-      <div>{(user && user.profile) ? user.profile.name : ''}</div>
-      <TaskList {...this.props} />
-      </AuthRequired>
+      <div className='container-fluid py-4'>
+        <AuthRequired user={user}>
+        <div>{(user && user.profile) ? user.profile.name : ''}</div>
+        <TaskList {...this.props} />
+        </AuthRequired>
+      </div>
     );
   }
 }

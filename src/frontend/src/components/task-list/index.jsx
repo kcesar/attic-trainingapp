@@ -1,6 +1,13 @@
 import React, { Component } from 'react'
-import { List, ListItem, Subheader, Dialog, FlatButton, Divider } from 'material-ui'
+import { ListGroup, ListGroupItem, ListGroupItemHeading, ListGroupItemText } from 'reactstrap'
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
 import marked from 'marked'
+
+class Subheader extends Component {
+  render() {
+    return <p className='text-muted' style={{marginTop: '1rem'}}>{this.props.children}</p>
+  }
+}
 
 class MarkdownItem extends Component {
   render() {
@@ -17,7 +24,17 @@ class TaskListItem extends Component {
   render() {
     const { task } = this.props
     const text = task.title
-    return <ListItem primaryText={text} secondaryText={task.summary} insetChildren={true} onTouchTap={this.onClick}  />
+    return <ListItem text={text} secondary={task.summary} onClick={this.onClick} />
+  }
+}
+
+class ListItem extends Component {
+  render() {
+    const { text, secondary } = this.props
+    return <ListGroupItem tag="button" action onClick={this.props.onClick}>
+    <ListGroupItemHeading>{text}</ListGroupItemHeading>
+    <ListGroupItemText>{secondary}</ListGroupItemText>
+    </ListGroupItem>
   }
 }
 
@@ -25,9 +42,9 @@ class SessionInfo extends Component {
   render() {
     const { task, record } = this.props
     return <div>
-      <h4 className='dialog-subtitle'>{task.summary}</h4>
+      <h5 className='dialog-subtitle'>{task.summary}</h5>
       <MarkdownItem markdown={task.details} />
-      <Divider />
+     <hr/>
       {JSON.stringify(record)}
     </div>
   }
@@ -37,9 +54,9 @@ class OnlineInfo extends Component {
   render() {
     const { task, record } = this.props
     return <div>
-      <h4 className='dialog-subtitle'>{task.summary}</h4>
+      <h5 className='dialog-subtitle'>{task.summary}</h5>
       <MarkdownItem markdown={task.details} />
-      <Divider />
+      <hr />
       <p>{(record && record.completed && !record.expires) ? 'You completed this task ' + record.completed.fromNow() : 'You still need to complete this online task' }</p>
     </div>
   }
@@ -82,23 +99,32 @@ class TaskList extends Component {
 
   render() {
     const { tasks, records, progress } = this.props
-    const dialogActions = this.state.infoDialog ? [
-      <FlatButton label="Close" primary={true} onTouchTap={this.closeInfo}/>
-    ] : []
 
-    return <List>
+    return <div>
         <Subheader>Personal Information</Subheader>
-        <ListItem primaryText='Contact Information' secondaryText='Address, Email, Phone number' insetChildren={true} />
-        <ListItem primaryText='Emergency Contacts' secondaryText='Who to call in an emergency' insetChildren={true} />
+        <ListGroup className='indent'>
+        <ListItem text='Contact Information' secondary='Address, Email, Phone number'/>
+        <ListItem text='Emergency Contacts' secondary='Who to call in an emergency'/>
+        </ListGroup>
         <Subheader>Available Tasks</Subheader>
+        <ListGroup className='indent'>
         {tasks.filter((i) => progress[i.title] && progress[i.title].available).map((i) => this.buildListItem(i))}
+        </ListGroup>
         <Subheader>Blocked Tasks</Subheader>
+        <ListGroup className='indent'>
         {tasks.filter((i) => progress[i.title] && progress[i.title].blocked).map((i) => this.buildListItem(i))}
+        </ListGroup>
         <Subheader>Completed Tasks</Subheader>
+        <ListGroup className='indent'>
         {tasks.filter((i) => progress[i.title] && progress[i.title].completed).map((i) => this.buildListItem(i))}
-        <Dialog open={!!records.loading}><div>Loading ...</div></Dialog>
-        <Dialog open={!!this.state.infoDialog} onRequestClose={this.closeInfo} actions={dialogActions} title={this.state.infoTitle}><div>{this.state.infoDialog}</div></Dialog>
-      </List>
+        </ListGroup>
+        <Modal isOpen={!!records.loading}><ModalBody>Loading ...</ModalBody></Modal>
+        <Modal isOpen={!!this.state.infoDialog} toggle={this.closeInfo}>
+          <ModalHeader toggle={this.closeInfo}>{this.state.infoTitle}</ModalHeader>
+          <ModalBody>{this.state.infoDialog}</ModalBody>
+          <ModalFooter><Button color="outline-primary" onClick={this.closeInfo}>Close</Button></ModalFooter>
+        </Modal>
+      </div>
   }
 }
 
