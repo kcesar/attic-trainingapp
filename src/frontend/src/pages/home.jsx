@@ -22,7 +22,7 @@ class HomePage extends Component {
     }
 
     return (
-      <div className='py-4'>
+      <div className='container py-4'>
         <div className='row'>
           <div className='sliderContainer col'>
             <Carousel {...carouselSettings} settings={carouselSettings}>

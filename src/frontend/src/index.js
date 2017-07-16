@@ -10,6 +10,7 @@ import { loadUser, OidcProvider } from 'redux-oidc'
 
 import axios from 'axios'
 
+import 'react-widgets/dist/css/react-widgets.css'
 import './assets/bootstrap.min.css'
 import './index.css'
 
@@ -31,11 +32,11 @@ const router = (
   <ConnectedRouter history={history} basename={baseUrl}>
     <div>
       <Route path={baseUrl} component={App} />
-      <div className='container'>
-        <Route exact path={baseUrl + "loggedIn"} component={LoggedInPage} />
-        <Route exact path={baseUrl} component={HomePage}/>
-        <Route exact path={baseUrl + "me"} component={TraineePage} />
-        <Route exact path={baseUrl + "signup"} component={SignupPage} />
+      <Route exact path={baseUrl + "loggedIn"} component={LoggedInPage} />
+      <Route exact path={baseUrl} component={HomePage}/>
+      <Route exact path={baseUrl + "me"} component={TraineePage} />
+      <Route exact path={baseUrl + "signup"} component={SignupPage} />
+      <div className='container py-4'>
         <div className='row justify-content-center'>
           <div style={{margin:'0 auto', textAlign:'center', padding: '5px', fontSize: '90%'}}>© 2017 - This project is open source. View it on <a href="https://github.com/kcesar/esar-training">GitHub</a></div>
         </div>

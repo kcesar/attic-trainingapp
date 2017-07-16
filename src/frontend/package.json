@@ -24,6 +24,7 @@
     "react-router-redux": "^5.0.0-alpha.6",
     "react-slick": "^0.14.11",
     "react-tap-event-plugin": "^2.0.1",
+    "react-widgets": "^3.4.8",
     "reactstrap": "^4.8.0",
     "redux": "^3.7.1",
     "redux-logger": "^3.0.6",

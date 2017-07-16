@@ -1,9 +1,20 @@
+/* breakpoints
+ xs 
+ sm 576
+ md 768
+ lg 992
+ xl 1200
+ */
 html, body {
   margin: 0;
   padding: 0;
   font-size: 16px;
 /*  font-family: Roboto, sans-serif;
   font-size: 16px;*/
+}
+
+.tight-cols div:not(:first-child) {
+  padding-left: 0px;
 }
 
 .btn {
@@ -17,15 +28,96 @@ html, body {
   margin-right:25px;
 }*/
 
+.container-fluid {
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
 button.nav-link {
   background-color:transparent;
   border-width: 0px;
 }
 
 
-.bg-primary, .btn-primary {
+.bg-primary, .btn-primary, .btn-outline-primary:hover {
   background-color: #008d23 !important; /*#2196F3;*/
 }
+.btn-outline-primary:hover {
+  border-color: #008d23; /*#2196F3;*/
+}
+
 .btn-outline-primary {
   color: #008d23; /*#2196F3;*/
+}
+
+.btn-flat {
+  border-width: 0px;
+  box-shadow: none;
+}
+
+.form-group label {
+  margin-bottom: 0;
+}
+
+.input-group-btn > .material-icons.btn {
+  text-transform: none;
+  font-size: 1.5rem;
+  padding: 0 .75rem;
+}
+
+
+.rw-widget {
+  border-width: 0px;
+  border-radius: 0px;
+}
+
+.rw-dropdownlist.rw-widget .rw-input {
+  padding-left: 0;
+}
+.rw-widget .rw-input {
+  border-radius: 0px;
+}
+.rw-widget>.rw-select {
+  border-left: inherit;
+}
+.rw-widget>.rw-select>button:hover {
+  color: #008d23;
+}
+
+
+.rw-datetimepicker input.rw-input {
+  -webkit-box-shadow:none;
+  box-shadow: inset 0 -1px 0 #ddd;
+}
+
+.rw-datetimepicker:hover {
+  background-color: inherit;
+}
+
+.rw-widget.rw-state-focus {
+  box-shadow:none !important;
+}
+.rw-widget.rw-state-focus:hover {
+  border-color: #008d23;
+}
+
+.rw-dropdownlist {
+  border-bottom: solid 1px #ddd;
+}
+
+.rw-dropdownlist:hover {
+  background-color:inherit;
+  border-color:#ddd;
+}
+.rw-dropdownlist.rw-state-focus {
+  border-bottom: solid 2px #008d23;
+}
+
+textarea:focus, textarea.form-control:focus, input.form-control:focus, input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, input[type=number]:focus, [type=text].form-control:focus, [type=password].form-control:focus, [type=email].form-control:focus, [type=tel].form-control:focus, [contenteditable].form-control:focus,
+.rw-datetimepicker input.rw-input:focus {
+  -webkit-box-shadow: inset 0 -2px 0 #008d23;
+  box-shadow: inset 0 -2px 0 #008d23;
+}
+ul.rw-list>li.rw-list-option.rw-state-focus {
+  border-color:#008d23;
 }
