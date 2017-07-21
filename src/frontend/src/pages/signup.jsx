@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
-import { FormGroup, Label, Input } from 'reactstrap'
+import { FormGroup, Label, Input, Button, Modal, ModalBody, ModalFooter } from 'reactstrap'
+
 import { LocalForm, Errors, actions as formActions } from 'react-redux-form'
 import moment from 'moment'
 import { DropdownList } from 'react-widgets'
@@ -21,7 +22,8 @@ class SignupPage extends Component {
     birthMonth: '',
     birthDay: '',
     birthdate: '',
-    gender: 'male'
+    gender: 'male',
+    errMsg: ''
   }
 
   showBirthdayPicker = () => {
@@ -46,26 +48,30 @@ class SignupPage extends Component {
     this.formDispatch(formActions.change('user.birthdate', moment([y,m,d])))
   }
 
-  handleChange = (values) => { console.log('handleChange', values)}
-  handleUpdate = (form) => { console.log('handleUpdate', form); this.setState({ form })}
+   closeError = () => {
+     this.setState({errMsg: ''})
+   }
+
+  handleUpdate = (form) => {
+    //console.log('handleUpdate', form);
+    this.setState({ form })
+  }
+  handleChange = (valudes) => {}
   handleSubmit = (values) => {
     const { localRoot, goToDashboard } = this.props
     console.log(values)
     this.setState({submitting: true})
     axios.post(`${localRoot}/signup`, {...values, birthdate: values.birthdate.format('YYYY-MM-DD'), gender: this.state.gender})
-    .then(msg => { goToDashboard(); return true}, err => { alert('err') })
+    .then(msg => { goToDashboard(); return true}, err => { this.setState({errMsg: err.response.data}) })
     .then(() => this.setState({submitting: false}))
 
     return true
   }
 
-  isValid = (property) => {const p = ((this.state.form||{})[property] || {}); console.log(p); return !p.touched || p.valid}
-
   render() {
     const form = this.state.form || {}
     const { authRoot } = this.props
     const thisYear = moment().year()
-    console.log((this.state.birthDay === '' || this.state.birthMonth === '' || this.state.birthYear === ''), !(form['$form']||{}).submitFailed, !(form.birthdate||{}).valid, (form['$form']||{}).validated, (form.birthdate||{}).value)
     const validDate = ((this.state.birthDay === '' || this.state.birthMonth === '' || this.state.birthYear === '') || !(form['$form']||{}).submitFailed || !(form.birthdate||{}).valid)
     return (
       <LocalForm
@@ -90,7 +96,7 @@ class SignupPage extends Component {
               passwordsMatch: v => v === ((form||{}).password||{}).value
             },
             birthdate: {
-              valid: v => { console.log('validating birthdate', JSON.stringify(v), JSON.stringify(moment.isMoment(v)), JSON.stringify(v && moment.isMoment(v) && v.isValid())); return v && moment.isMoment(v) && v.isValid() }
+              valid: v => v && moment.isMoment(v) && v.isValid()
             }
           }}
       >
@@ -179,10 +185,9 @@ class SignupPage extends Component {
               }} />
           <ValidatedControl form={form} label='Password *' name='password' className='col-9 col-md-7 col-lg-5 col-xl-4' required component={Input} type='password' />
           <ValidatedControl form={form} label='Confirm password' name='confirm' className='col-9 col-md-7 col-lg-5 col-xl-4' component={Input} type='password'
-         
-           messages={{
-            passwordsMatch: 'Passwords do not match'
-          }} />
+              messages={{
+                passwordsMatch: 'Passwords do not match'
+              }} />
         </Step>
         <Step step={3} title='Create Account'>
           <p>Click the button below to sign up as a trainee with King County Explorer Search and
@@ -190,6 +195,10 @@ class SignupPage extends Component {
           to track your progress through the training season.</p>
           <button className="btn btn-primary" disabled={this.state.submitting}>Sign Up{this.state.submitting ? <span> <i className='fa fa-fw fa-spin fa-spinner'></i></span> : null}</button>
         </Step>
+        <Modal isOpen={!!this.state.errMsg} toggle={this.closeError}>
+          <ModalBody className='text-danger'>{JSON.stringify(this.state.errMsg)}</ModalBody>
+          <ModalFooter><Button color="outline-primary" onClick={this.closeError}>Close</Button></ModalFooter>
+        </Modal>
       </LocalForm>
     );
   }
