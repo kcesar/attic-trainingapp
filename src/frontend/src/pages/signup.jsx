@@ -1,19 +1,21 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { FormGroup, Label, Input } from 'reactstrap';
-import Step from '../components/step'
+import { push } from 'react-router-redux'
+import { FormGroup, Label, Input } from 'reactstrap'
+import { LocalForm, Errors, actions as formActions } from 'react-redux-form'
 import moment from 'moment'
-import momentLocalizer from 'react-widgets/lib/localizers/moment'
 import { DropdownList } from 'react-widgets'
-import * as actions from '../actions'
+import axios from 'axios'
 
-momentLocalizer(moment)
+import Step from '../components/step'
+import ValidatedControl from '../components/validated-control'
+import * as actions from '../actions'
 
 class SignupPage extends Component {
   state = {
-    firstName: '',
+    first: '',
     middle: '',
-    lastName: '',
+    last: '',
     email: '',
     birthYear: '',
     birthMonth: '',
@@ -27,57 +29,88 @@ class SignupPage extends Component {
   }
 
   setFirst = (e,v) => {
-    this.setState({firstName: v})
+    this.setState({first: v})
   }
 
   setGender = (v) => {
     this.setState({gender: v})
   }
 
-  doSignup = (e) => {
-    alert('sign up')
-  }
-
   setDate = (y,m,d) => {
-    console.log(y,m,d)
+    console.log(y,m,d)    
     this.setState({
       birthYear: y,
       birthMonth: m,
-      birthDay: d,
-      birthdate: (y !== '' && m !== '' && d !== '') ? new Date(y, m, d) : ''
+      birthDay: d
     })
+    this.formDispatch(formActions.change('user.birthdate', moment([y,m,d])))
   }
 
+  handleChange = (values) => { console.log('handleChange', values)}
+  handleUpdate = (form) => { console.log('handleUpdate', form); this.setState({ form })}
+  handleSubmit = (values) => {
+    const { localRoot, goToDashboard } = this.props
+    console.log(values)
+    this.setState({submitting: true})
+    axios.post(`${localRoot}/signup`, {...values, birthdate: values.birthdate.format('YYYY-MM-DD'), gender: this.state.gender})
+    .then(msg => { goToDashboard(); return true}, err => { alert('err') })
+    .then(() => this.setState({submitting: false}))
+
+    return true
+  }
+
+  isValid = (property) => {const p = ((this.state.form||{})[property] || {}); console.log(p); return !p.touched || p.valid}
+
   render() {
+    const form = this.state.form || {}
+    const { authRoot } = this.props
     const thisYear = moment().year()
+    console.log((this.state.birthDay === '' || this.state.birthMonth === '' || this.state.birthYear === ''), !(form['$form']||{}).submitFailed, !(form.birthdate||{}).valid, (form['$form']||{}).validated, (form.birthdate||{}).value)
+    const validDate = ((this.state.birthDay === '' || this.state.birthMonth === '' || this.state.birthYear === '') || !(form['$form']||{}).submitFailed || !(form.birthdate||{}).valid)
     return (
-      <div className='container-fluid py-4'>
+      <LocalForm
+        className='container-fluid py-4'
+        onUpdate={this.handleUpdate}
+        onChange={this.handleChange}
+        onSubmit={this.handleSubmit}
+        getDispatch={(dispatch) => this.formDispatch = dispatch}
+        initialState={{
+          first: '',
+          middle: '',
+          last: '',
+          email: '',
+          username: '',
+          password: '',
+          confirm: '',
+          birthdate: ''
+        }}
+        model="user"
+          validators={{
+            confirm: {
+              passwordsMatch: v => v === ((form||{}).password||{}).value
+            },
+            birthdate: {
+              valid: v => { console.log('validating birthdate', JSON.stringify(v), JSON.stringify(moment.isMoment(v)), JSON.stringify(v && moment.isMoment(v) && v.isValid())); return v && moment.isMoment(v) && v.isValid() }
+            }
+          }}
+      >
+      <Errors model='user.confirm' />
         <p><strong>If you are already a member of another King County SAR unit,
          contact <a href="mailto:database@kcesar.org">database@kcesar.org</a> instead
          of using this form</strong></p>
         <Step step={1} title='Personal Information'>
           <div className='row'>
-            <FormGroup className='col-12 col-md'>
-              <Label for="firstname">First name *</Label>
-              <Input type="text" name="firstname" />
-            </FormGroup>
-            <FormGroup className='col-12 col-md'>
-              <Label for='middlename'>Middle</Label>
-              <Input type='text' name='middlename' />
-            </FormGroup>
-            <FormGroup className='col-12 col-md'>
-              <Label for='lastname'>Last name *</Label>
-              <Input type='text' name='lastname' />
-            </FormGroup>
+            <ValidatedControl form={form} label="First name *" name="first" className="col-12 col-md" required component={Input} messages={{
+              valueMissing: 'Required'
+            }} />
+            <ValidatedControl form={form} label="Middle name" name="middle" className="col-12 col-md" component={Input} />
+            <ValidatedControl form={form} label="Last name *" name="last" className="col-12 col-md" component={Input} required messages={{ valueMissing: 'Required' }} />
           </div>
           <div className='row'>
-            <FormGroup className='col col-md-6'>
-              <Label for='email'>Email *</Label>
-              <Input type='email' name='email' />
-            </FormGroup>
+            <ValidatedControl form={form} label="Email *" name="email" className="col col-md-6" component={Input} required messages={{ valueMissing: 'Required' }} />
           </div>
           <div className='row'>
-            <FormGroup className='col-12 col-sm-7 col-md-6 col-lg-5 col-xl-4'>
+            <FormGroup className={'col-12 col-sm-7 col-md-6 col-lg-5 col-xl-4' + (validDate ? '' : ' has-danger')}>
               <Label for='birthdate'>Birth Date *</Label>
               <div className='row tight-cols'>
               <div className='col-5'>
@@ -103,6 +136,10 @@ class SignupPage extends Component {
                 placeholder='Year'
                 onChange={v => this.setDate(v, this.state.birthMonth, this.state.birthDay)} />
               </div>
+              { validDate ? null :
+                <div className='row text-danger'><Errors model='.birthdate' messages={{ valid: 'Not a valid date' }}  /></div> 
+              }
+
               </div>
             </FormGroup>
             <div className='col-1 hidden-sm-down'></div>
@@ -122,39 +159,54 @@ class SignupPage extends Component {
           <p>Some of our systems require you to log in with a username and password. Use the fields
           below to create an account. In later steps you'll be able to link this account to a
           Facebook or Google account.</p>
-          <FormGroup className='col-9 col-md-7 col-lg-5 col-xl-4'>
-            <Label for='username'>Username *</Label>
-            <Input type='text' name='username' />
-          </FormGroup>
-          <FormGroup className='col-9 col-md-7 col-lg-5 col-xl-4'>
-            <Label for='password'>Password *</Label>
-            <Input type='password' name='password' />
-          </FormGroup>
-          <FormGroup className='col-9 col-md-7 col-lg-5 col-xl-4'>
-            <Label for='confirm'>Confirm Password</Label>
-            <Input type='password' name='confirm' />
-          </FormGroup>
+          <ValidatedControl form={form} label='Username *' name='username' className='col-9 col-md-7 col-lg-5 col-xl-4' required component={Input}
+              asyncValidators={{
+                isAvailable: (value, done) => {
+                  axios.get(`${authRoot}/checkusername/${encodeURIComponent(value)}`)
+                    .then(msg => {
+                      done(msg.data ==='Available')
+                    }, err => {alert("Can't talk to server. Try again."); return done(false)})
+                }
+              }}
+              validators = {{
+                format: v => /^[a-z0-9][a-z0-9_.-]*$/i.test(v),
+                length: v => v && v.length > 3
+              }}
+               messages={{
+                isAvailable: 'Username not available',
+                format: 'Can only use letters, numbers, _, -, or period. Must start with letter or number.',
+                length: 'Must be longer than 3 characters'
+              }} />
+          <ValidatedControl form={form} label='Password *' name='password' className='col-9 col-md-7 col-lg-5 col-xl-4' required component={Input} type='password' />
+          <ValidatedControl form={form} label='Confirm password' name='confirm' className='col-9 col-md-7 col-lg-5 col-xl-4' component={Input} type='password'
+         
+           messages={{
+            passwordsMatch: 'Passwords do not match'
+          }} />
         </Step>
         <Step step={3} title='Create Account'>
           <p>Click the button below to sign up as a trainee with King County Explorer Search and
           Rescue. You'll then be able to sign in using the username and password specified above
           to track your progress through the training season.</p>
-          <button className='btn btn-primary' onClick={this.doSignup}>Sign up</button>
+          <button className="btn btn-primary" disabled={this.state.submitting}>Sign Up{this.state.submitting ? <span> <i className='fa fa-fw fa-spin fa-spinner'></i></span> : null}</button>
         </Step>
-      </div>
+      </LocalForm>
     );
   }
 }
 
 const storeToProps = (store) => {
   return {
-    user: store.oidc ? store.oidc.user : undefined
+    user: store.oidc ? store.oidc.user : undefined,
+    authRoot: store.config.authRoot,
+    localRoot: store.config.localRoot
   }
 }
 
 const dispatchToProps = (dispatch, ownProps) => {
   return {
-    getUserData: () => dispatch(actions.getUserData())
+    getUserData: () => dispatch(actions.getUserData()),
+    goToDashboard: () => dispatch(push('/me'))
   }
 }
 

@@ -31,8 +31,9 @@ const defaultState = {
   records: { loaded: false, loading: false},
   progress: {},
   config: {
-    localRoot: '/api',
-    remoteRoot: 'http://localhost:4944/api2'
+    localRoot: '',
+    remoteRoot: 'http://localhost:4944/api2',
+    authRoot: 'http://localhost:4944/auth'
   }
 }
 

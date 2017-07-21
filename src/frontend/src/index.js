@@ -6,6 +6,8 @@ import { ConnectedRouter } from 'react-router-redux'
 import { Provider } from 'react-redux'
 import { loadUser, OidcProvider } from 'redux-oidc'
 
+import moment from 'moment'
+import momentLocalizer from 'react-widgets/lib/localizers/moment'
 import axios from 'axios'
 
 import 'react-widgets/dist/css/react-widgets.css'
@@ -23,6 +25,8 @@ import LoggedInPage from './pages/logged-in'
 import SignupPage from './pages/signup'
 
 const baseUrl = window.baseUrl || '/'
+
+momentLocalizer(moment)
 
 const router = (
   <ConnectedRouter history={history} basename={baseUrl}>

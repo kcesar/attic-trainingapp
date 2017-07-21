@@ -31,7 +31,10 @@ export function doSignin(targetUrl) {
 export function doSignout() {
   return (dispatch, getState) => {
     var state = getState();
-    if (state.oidc.user && state.oidc.user.token_type) return userManager.signoutRedirect();
+    if (state.oidc.user && state.oidc.user.token_type) {
+      sessionStorage.setItem('redirect', window.baseUrl || '/')
+      return userManager.signoutRedirect();
+    }
     return Promise.resolve()
   }
 }
