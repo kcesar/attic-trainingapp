@@ -80,6 +80,16 @@ namespace esar_training
         app.UseExceptionHandler("/Home/Error");
       }
 
+      app.UseIdentityServerAuthentication(new IdentityServerAuthenticationOptions
+      {
+        Authority = Configuration["auth:authority"],
+        AutomaticAuthenticate = true,
+        LegacyAudienceValidation = true,
+
+        ApiName = "introspection",
+        ApiSecret = Configuration["auth:introspection_key"],
+        RequireHttpsMetadata = false
+      });
       app.UseStaticFiles();
       app.UseMvc();
     }
