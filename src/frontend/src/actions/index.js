@@ -4,6 +4,8 @@ import userManager from '../user-manager'
 export const REQUEST_RECORDS = 'REQUEST_RECORDS'
 export const RECEIVE_RECORDS = 'RECEIVE_RECORDS'
 export const UPDATE_PROGRESS = 'UPDATE_PROGRESS'
+export const REQUEST_SESSIONS = 'REQUEST_SESSIONS'
+export const RECEIVE_SESSIONS = 'RECEIVE_SESSIONS'
 
 export function getUserData() {
   return (dispatch, getState) => {
@@ -13,6 +15,17 @@ export function getUserData() {
     return axios.get(`${state.config.remoteRoot}/members/${state.oidc.user.profile.memberId}/trainingrecords`)
       .then((msg) => dispatch({type: RECEIVE_RECORDS, payload: {data: msg.data.items, filterNames: state.tasks.map(t => t.title)}}))
       .then(() => dispatch({type: UPDATE_PROGRESS, payload: getState() }))
+  }
+}
+
+export function getSchedule() {
+  return (dispatch, getState) => {
+    var state = getState()
+
+    dispatch({ type: REQUEST_SESSIONS })
+    return axios.get(`${state.config.localRoot}/api/schedule`)
+    .then((msg) => dispatch({type: RECEIVE_SESSIONS, payload: { data: msg.data.items }}))
+    .then(() => dispatch({type: UPDATE_PROGRESS, payload: getState() }))
   }
 }
 

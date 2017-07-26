@@ -24,13 +24,15 @@ const storeToProps = (store) => {
     user: store.oidc ? store.oidc.user : undefined,
     tasks: store.tasks,
     records: store.records,
-    progress: store.progress
+    progress: store.progress,
+    schedule: store.schedule
   }
 }
 
 const dispatchToProps = (dispatch, ownProps) => {
   return {
-    getUserData: () => dispatch(actions.getUserData())
+    getUserData: () => dispatch(actions.getUserData()),
+    getSchedule: () => dispatch(actions.getSchedule())
   }
 }
 

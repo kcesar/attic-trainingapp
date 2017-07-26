@@ -7,6 +7,7 @@ import { reducer as oidc } from 'redux-oidc'
 
 import progress from './reducers/progress-reducer'
 import records from './reducers/records-reducer'
+import schedule from './reducers/schedule-reducer'
 
 const defaultState = {
   oidc: { user: Object.keys(sessionStorage).filter(function(i) { return i.startsWith('oidc.user')}).length ? {} : null},
@@ -16,17 +17,17 @@ const defaultState = {
       { 'title': 'Emergency Contacts', summary: 'Who to call in an emergency', category: 'personal' },
       { 'title': 'ICS-100', summary: 'FEMA required online course', category: 'online', details: 'ICS 100, Introduction to the Incident Command System, introduces the Incident Command System (ICS) and provides the foundation for higher level ICS training. This course describes the history, features and principles, and organizational structure of the Incident Command System. It also explains the relationship between ICS and the National Incident Management System (NIMS).\n\nhttps://training.fema.gov/is/courseoverview.aspx?code=IS-100.b' },
       { 'title': 'ICS-700', summary: 'FEMA required online course', category: 'online' },
-      { 'title': 'Course A', summary: 'Evening orientation', category: 'session', details: 'This is an in-town weeknight informational meeting used to present ESAR objectives, organization and procedures.\n\nDiscussions center on basic training course content, requirements for team member field qualification, and personal equipment needs.'},
-      { 'title': 'Course B - Map + Compass', summary: 'Indoor navigation course', category: 'session', prereqs: ['Course A'] },
-      { 'title': 'Course B - First Aid', summary: "First aid and CPR training", category: 'session', prereqs: ['Course A'] },
+      { 'title': 'Course A', summary: 'Evening orientation', category: 'session', details: 'This is an in-town weeknight informational meeting used to present ESAR objectives, organization and procedures.\n\nDiscussions center on basic training course content, requirements for team member field qualification, and personal equipment needs.', hours: 2},
+      { 'title': 'Course B - Map + Compass', summary: 'Indoor navigation course', category: 'session', prereqs: ['Course A'], hours: 8 },
+      { 'title': 'Course B - First Aid', summary: "First aid and CPR training", category: 'session', prereqs: ['Course A'], hours: 8 },
       { 'title': 'Background Check', summary: "Sheriff's Office application", category: 'paperwork' },
       { 'title': 'LFL Registration', summary: "For youth members", category: 'paperwork' },
       { 'title': 'Submit Photo', summary: "Submit portrait for ID card", category: 'paperwork' },
-      { 'title': 'Course C', summary: "Outdoor weekend - Intro to SAR", category: 'session', prereqs: ['Course B - Map + Compass', 'Course B - First Aid', 'Background Check', 'LFL Registration'] },
-      { 'title': 'Course I', summary: "Outdoor weekend - Navigation", category: 'session', prereqs: ['Course C'] },
-      { 'title': 'Course II', summary: "Outdoor weekend - Evaluation", category: 'session', prereqs: ['Course I'] },
-      { 'title': 'Searcher First Aid', summary: "SAR specific first aid", category: 'session', prereqs: ['Course II'] },
-      { 'title': 'Course III', summary: "Outdoor weekend - mock mission", category: 'session', prereqs: ['Searcher First Aid'] },
+      { 'title': 'Course C', summary: "Outdoor weekend - Intro to SAR", category: 'session', hours: 30, prereqs: ['Course B - Map + Compass', 'Course B - First Aid', 'Background Check', 'LFL Registration'] },
+      { 'title': 'Course I', summary: "Outdoor weekend - Navigation", category: 'session', prereqs: ['Course C'], hours: 30 },
+      { 'title': 'Course II', summary: "Outdoor weekend - Evaluation", category: 'session', prereqs: ['Course I'], hours: 30 },
+      { 'title': 'Searcher First Aid', summary: "SAR specific first aid", category: 'session', prereqs: ['Course II'], hours: 8 },
+      { 'title': 'Course III', summary: "Outdoor weekend - mock mission", category: 'session', prereqs: ['Searcher First Aid'], hours: 8 },
     ],
   records: { loaded: false, loading: false},
   progress: {},
@@ -55,7 +56,8 @@ const rootReducer = combineReducers({
   tasks: function tasksReducer(state = [], action) { return state },
   config: function tasksReducer(state = [], action) { return state },
   records,
-  progress
+  progress,
+  schedule
 })
 
 

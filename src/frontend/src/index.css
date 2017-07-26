@@ -137,3 +137,15 @@ textarea:focus, textarea.form-control:focus, input.form-control:focus, input[typ
 ul.rw-list>li.rw-list-option.rw-state-focus {
   border-color:#008d23;
 }
+
+.hanging-fa-fw {
+  padding-left: 1.28571429em ;
+  text-indent: -1.28571429em ;
+}
+
+ul.list-group>button {
+  align-items:stretch;
+}
+.justify-content-between {
+  display: flex;
+}

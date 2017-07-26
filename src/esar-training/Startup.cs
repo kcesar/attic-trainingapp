@@ -1,6 +1,8 @@
 ﻿using System.IO;
+using Kcesar.Training.Website.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -34,6 +36,8 @@ namespace esar_training
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddSingleton(Configuration);
+
+      services.AddDbContext<TrainingContext>(options => options.UseSqlServer(Configuration["database"]));
 
       // Add framework services.
       services.AddMvc();

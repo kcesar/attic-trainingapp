@@ -3,14 +3,14 @@ import moment from 'moment'
 
 const computers = {
   online: function(task, state) {
-    const record = state.records.items[task.title] || {}
+    const record = (state.records.items || [])[task.title] || {}
     return {
       status: record.completed ? 'Complete' : null,
       completed: record.completed ? moment(record.completed) : null
     }
   },
   session: function(task, state) {
-    const record = state.records.items[task.title] || {}
+    const record = (state.records.items || [])[task.title] || {}
     return {
       status: record.completed ? 'Complete' : null,
       completed: record.completed ? moment(record.completed) : null

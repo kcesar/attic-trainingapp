@@ -102,7 +102,7 @@ namespace Kcesar.Training.Website.Controllers
           Gender = (details.Gender == "male" || details.Gender == "female") ? details.Gender : "unknown",
           WacLevel = "Novice",
           WacLevelDate = DateTime.Now,
-          BirthDate = details.BirthDate.LocalDateTime
+          BirthDate = details.BirthDate.Date
         });
       var response = JsonConvert.DeserializeObject<JObject>(responseJson);
 
