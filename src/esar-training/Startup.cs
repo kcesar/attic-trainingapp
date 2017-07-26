@@ -37,7 +37,7 @@ namespace esar_training
     {
       services.AddSingleton(Configuration);
 
-      services.AddDbContext<TrainingContext>(options => options.UseSqlServer(Configuration["database"]));
+      services.AddDbContext<TrainingContext>(options => options.UseSqlServer(Configuration["database"], o => o.MigrationsHistoryTable("__Migrations", "trainingapp")));
 
       // Add framework services.
       services.AddMvc();

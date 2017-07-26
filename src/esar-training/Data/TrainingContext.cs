@@ -12,6 +12,12 @@ namespace Kcesar.Training.Website.Data
             : base(options)
         { }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+      base.OnModelCreating(modelBuilder);
+      modelBuilder.HasDefaultSchema("trainingapp");
+    }
+
     public DbSet<CourseOffering> Offerings { get; set; }
     public DbSet<CourseSignup> Signups { get; set; }
   }

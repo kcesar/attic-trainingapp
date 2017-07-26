@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Kcesar.Training.Website.Data;
 
-namespace esartraining.Migrations
+namespace Kcesar.Training.Website.Migrations
 {
     [DbContext(typeof(TrainingContext))]
     partial class TrainingContextModelSnapshot : ModelSnapshot
@@ -13,6 +13,7 @@ namespace esartraining.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
             modelBuilder
+                .HasDefaultSchema("trainingapp")
                 .HasAnnotation("ProductVersion", "1.1.2")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -23,8 +24,6 @@ namespace esartraining.Migrations
 
                     b.Property<int>("Capacity");
 
-                    b.Property<string>("CourseId");
-
                     b.Property<string>("CourseName");
 
                     b.Property<string>("Location");
@@ -33,7 +32,7 @@ namespace esartraining.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Offerings");
+                    b.ToTable("Offerings","trainingapp");
                 });
 
             modelBuilder.Entity("Kcesar.Training.Website.Data.CourseSignup", b =>
@@ -55,7 +54,7 @@ namespace esartraining.Migrations
 
                     b.HasIndex("OfferingId");
 
-                    b.ToTable("Signups");
+                    b.ToTable("Signups","trainingapp");
                 });
 
             modelBuilder.Entity("Kcesar.Training.Website.Data.CourseSignup", b =>

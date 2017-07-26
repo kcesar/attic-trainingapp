@@ -3,21 +3,25 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace esartraining.Migrations
+namespace Kcesar.Training.Website.Migrations
 {
     public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.EnsureSchema(
+                name: "trainingapp");
+
             migrationBuilder.CreateTable(
                 name: "Offerings",
+                schema: "trainingapp",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Capacity = table.Column<int>(nullable: false),
-                    CourseId = table.Column<string>(nullable: true),
                     CourseName = table.Column<string>(nullable: true),
+                    Location = table.Column<string>(nullable: true),
                     When = table.Column<DateTimeOffset>(nullable: false)
                 },
                 constraints: table =>
@@ -27,13 +31,15 @@ namespace esartraining.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Signups",
+                schema: "trainingapp",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Created = table.Column<DateTimeOffset>(nullable: false),
                     Name = table.Column<string>(nullable: true),
-                    OfferingId = table.Column<int>(nullable: true),
+                    OfferingId = table.Column<int>(nullable: false),
+                    OnWaitList = table.Column<bool>(nullable: false),
                     User = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -42,13 +48,15 @@ namespace esartraining.Migrations
                     table.ForeignKey(
                         name: "FK_Signups_Offerings_OfferingId",
                         column: x => x.OfferingId,
+                        principalSchema: "trainingapp",
                         principalTable: "Offerings",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Signups_OfferingId",
+                schema: "trainingapp",
                 table: "Signups",
                 column: "OfferingId");
         }
@@ -56,10 +64,12 @@ namespace esartraining.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Signups");
+                name: "Signups",
+                schema: "trainingapp");
 
             migrationBuilder.DropTable(
-                name: "Offerings");
+                name: "Offerings",
+                schema: "trainingapp");
         }
     }
 }
