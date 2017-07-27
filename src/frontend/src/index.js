@@ -63,5 +63,5 @@ ReactDOM.render(
     </OidcProvider>
   </Provider>
  , document.getElementById('root'));
-registerServiceWorker();
+//registerServiceWorker();
 
