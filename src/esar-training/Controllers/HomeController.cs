@@ -52,18 +52,10 @@ namespace Kcesar.Training.Website.Controllers
 
     [HttpGet("")]
     [HttpGet("me")]
+    [HttpGet("signup")]
     public IActionResult React()
     {
       return Content(GetReactHtml(), "text/html");
-    }
-
-
-    [HttpGet("signup")]
-    public IActionResult Signup()
-    {
-      ViewData["Message"] = "Your application description page.";
-
-      return View();
     }
 
     [HttpPost("signup")]
@@ -194,12 +186,6 @@ namespace Kcesar.Training.Website.Controllers
       }
       var tokenSet = JsonConvert.DeserializeObject<JObject>(responseJson);
       return tokenSet["access_token"].Value<string>();
-    }
-
-    [HttpGet("home/error")]
-    public IActionResult Error()
-    {
-      return View();
     }
   }
 }
