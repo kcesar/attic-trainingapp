@@ -71,8 +71,10 @@ call :ExecuteCmd dotnet restore "%DEPLOYMENT_SOURCE%\src\esar-training\esar-trai
 IF !ERRORLEVEL! NEQ 0 goto error
 
 pushd "%DEPLOYMENT_SOURCE%\src\frontend"
-call npm run install --dev
-call npm run Build
+call npm install
+if "%ERRORLEVEL%" NEQ "0" exit /b %ERRORLEVEL%
+call npm run build
+if "%ERRORLEVEL%" NEQ "0" exit /b %ERRORLEVEL%
 robocopy /MIR build "%DEPLOYMENT_SOURCE%\src\esar-training\wwwroot"
 popd
 

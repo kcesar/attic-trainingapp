@@ -2,11 +2,9 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "devDependencies": {
-    "cpx": "^1.5.0",
-    "react-scripts": "1.0.10"
-  },
   "dependencies": {
+    "cpx": "^1.5.0",
+    "react-scripts": "1.0.10",
     "axios": "^0.16.2",
     "babel-polyfill": "^6.23.0",
     "history": "^4.6.3",
