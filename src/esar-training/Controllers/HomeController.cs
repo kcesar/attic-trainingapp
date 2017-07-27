@@ -42,8 +42,18 @@ namespace Kcesar.Training.Website.Controllers
             {
               authority = _config["auth:authority"]
             });
+            var config = JsonConvert.SerializeObject(new
+            {
+              localRoot = "",
+              remoteRoot = _config["apis:database:root"],
+              authRoot = _config["apis:accounts:root"]
+            });
 
-            reactHtml = System.IO.File.ReadAllText(Path.Combine(_webRoot, "index.html")).Replace("<head>", $"<head><base href=\"{_config["baseUrl"] ?? Url.Content("~/")}\"/><script>window.baseUrl = \"{Url.Content("~/")}\"; window.siteAuth = {authConfig};</script>");
+            reactHtml = System.IO.File.ReadAllText(Path.Combine(_webRoot, "index.html")).Replace("<head>", $"<head>" +
+              $"<base href=\"{_config["baseUrl"] ?? Url.Content("~/")}\"/>" +
+              $"<script>window.baseUrl = \"{Url.Content("~/")}\";" +
+              $"window.siteAuth = {authConfig};" +
+              $"window.siteConfig = {config};</script>");
           }
         }
       }

@@ -31,11 +31,11 @@ const defaultState = {
     ],
   records: { loaded: false, loading: false},
   progress: {},
-  config: {
+  config: Object.assign({
     localRoot: '',
     remoteRoot: 'http://localhost:4944/api2',
     authRoot: 'http://localhost:4944/auth'
-  }
+  }, window.siteConfig)
 }
 
 export const history = createBrowserHistory()
