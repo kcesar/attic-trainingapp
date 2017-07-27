@@ -40,10 +40,10 @@ namespace Kcesar.Training.Website.Controllers
           {
             var authConfig = JsonConvert.SerializeObject(new
             {
-              authority = _config["authority"]
+              authority = _config["auth:authority"]
             });
 
-            reactHtml = System.IO.File.ReadAllText(Path.Combine(_webRoot, "index.html")).Replace("<head>", $"<head><base href=\"{_config["baseUrl"] ?? Url.Content("~/")}\"/><script>window.baseUrl = \"{Url.Content("~/")}; window.siteAuth = ${authConfig};\";</script>");
+            reactHtml = System.IO.File.ReadAllText(Path.Combine(_webRoot, "index.html")).Replace("<head>", $"<head><base href=\"{_config["baseUrl"] ?? Url.Content("~/")}\"/><script>window.baseUrl = \"{Url.Content("~/")}\"; window.siteAuth = {authConfig};</script>");
           }
         }
       }
