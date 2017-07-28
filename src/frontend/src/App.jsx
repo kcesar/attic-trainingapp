@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem } from 'reactstrap';
+import { Collapse, Navbar, NavbarToggler, Nav, NavItem } from 'reactstrap';
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 import * as actions from './actions'
 
@@ -29,7 +30,7 @@ class App extends Component {
       <div>
         <Navbar color='primary' toggleable inverse>
           <NavbarToggler right onClick={this.toggle} />
-          <NavbarBrand href='/'>King County ESAR<span className='hidden-xs-down'> - Basic Training</span></NavbarBrand>
+          <Link to='/' className='navbar-brand'>King County ESAR<span className='hidden-xs-down'> - Basic Training</span></Link>
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className='ml-auto' navbar><NavItem><button className='nav-link' onClick={this.toggleAuth}>Sign {user && user.token_type ? 'out' : 'in'}</button></NavItem></Nav>
           </Collapse>
