@@ -7,6 +7,7 @@ import { routerReducer as routing, routerMiddleware } from 'react-router-redux'
 import progress from './reducers/progress-reducer'
 import records from './reducers/records-reducer'
 import schedule from './reducers/schedule-reducer'
+import member from './reducers/member-reducer'
 import oidc from './reducers/oidc-reducer'
 
 const defaultState = {
@@ -57,7 +58,8 @@ const rootReducer = combineReducers({
   config: function tasksReducer(state = [], action) { return state },
   records,
   progress,
-  schedule
+  schedule,
+  member
 })
 
 

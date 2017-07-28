@@ -12,18 +12,18 @@ class AuthRequired extends Component {
   }
 
   loginIfNeeded() {
-    const { user } = this.props
-    if (user) {
+    const { oidc } = this.props
+    if (oidc.user || oidc.signingOut) {
       return
     }
 
-    sessionStorage.setItem('redirect', '/me')
+    sessionStorage.setItem('redirect', window.location.pathname + window.location.search + window.location.hash)
     userManager.signinRedirect();
   }
 
   render() {
-    const { user } = this.props
-    return (<div>{(user && user.token_type) ? this.props.children : null }</div>)
+    const { oidc } = this.props || {}
+    return (<div>{(oidc.user && oidc.user.token_type) ? this.props.children : null }</div>)
   }
 }
 

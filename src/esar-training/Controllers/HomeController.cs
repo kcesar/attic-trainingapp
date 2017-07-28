@@ -64,6 +64,7 @@ namespace Kcesar.Training.Website.Controllers
     [HttpGet("me")]
     [HttpGet("signup")]
     [HttpGet("loggedIn")]
+    [HttpGet("trainee/*")]
     public IActionResult React()
     {
       return Content(GetReactHtml(), "text/html");

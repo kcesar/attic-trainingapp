@@ -24,17 +24,35 @@ import TraineePage from './pages/trainee'
 import LoggedInPage from './pages/logged-in'
 import SignupPage from './pages/signup'
 
+import * as actions from './actions'
+
 const baseUrl = window.baseUrl || '/'
 
 momentLocalizer(moment)
+
+const watchMemberId = props => {
+  console.log('watchMemberId')
+  const { member, oidc } = store.getState()
+  const memberId = ((props.match || {}).params || {}).memberId || (((oidc||{}).user||{}).profile||{}).memberId
+  if (memberId !== (member||{}).id) {
+    store.dispatch({type: actions.SET_MEMBER, payload: { id: memberId } })
+  }
+  return null
+}
+store.subscribe(() => {
+  watchMemberId({match: { params: { memberId: store.getState().member.id }}})
+})
 
 const router = (
   <ConnectedRouter history={history} basename={baseUrl}>
     <div>
       <Route path={baseUrl} component={App} />
       <Route exact path={baseUrl + "loggedIn"} component={LoggedInPage} />
-      <Route exact path={baseUrl} component={HomePage}/>
+      <Route exact path={baseUrl} component={HomePage} />
+      <Route path={baseUrl + 'me'} render={watchMemberId} />
       <Route exact path={baseUrl + "me"} component={TraineePage} />
+      <Route path={baseUrl + "trainee/:memberId"} render={watchMemberId} />
+      <Route exact path={baseUrl + 'trainee/:memberId'} component={TraineePage} />
       <Route exact path={baseUrl + "signup"} component={SignupPage} />
       <div className='container py-4'>
         <div className='row justify-content-center'>

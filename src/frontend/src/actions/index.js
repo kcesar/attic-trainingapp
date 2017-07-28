@@ -1,11 +1,13 @@
 import axios from 'axios'
 import userManager from '../user-manager'
+import { isInRole } from '../utils'
 
 export const REQUEST_RECORDS = 'REQUEST_RECORDS'
 export const RECEIVE_RECORDS = 'RECEIVE_RECORDS'
 export const UPDATE_PROGRESS = 'UPDATE_PROGRESS'
 export const REQUEST_SESSIONS = 'REQUEST_SESSIONS'
 export const RECEIVE_SESSIONS = 'RECEIVE_SESSIONS'
+export const SET_MEMBER = 'SET_MEMBER'
 export const SIGNING_OUT = 'SIGNING_OUT'
 
 export function getUserData() {
@@ -13,9 +15,15 @@ export function getUserData() {
     var state = getState();
 
     dispatch({type: REQUEST_RECORDS})
-    return axios.get(`${state.config.remoteRoot}/members/${state.oidc.user.profile.memberId}/trainingrecords`)
-      .then((msg) => dispatch({type: RECEIVE_RECORDS, payload: {data: msg.data.items, filterNames: state.tasks.map(t => t.title)}}))
-      .then(() => dispatch({type: UPDATE_PROGRESS, payload: getState() }))
+    return axios.get(`${state.config.remoteRoot}/members/${state.member.id || state.oidc.user.profile.memberId}`)
+    .then((msg) => {
+      dispatch({type: SET_MEMBER, payload: msg.data})
+      return axios.get(`${state.config.remoteRoot}/members/${state.member.id || state.oidc.user.profile.memberId}/trainingrecords`)
+    })
+    .then((msg) =>
+      dispatch({type: RECEIVE_RECORDS, payload: {data: msg.data.items, filterNames: state.tasks.map(t => t.title)}}))
+    .then(() =>
+      dispatch({type: UPDATE_PROGRESS, payload: getState() }))
   }
 }
 

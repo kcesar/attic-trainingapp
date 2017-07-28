@@ -3,16 +3,20 @@ import { connect } from 'react-redux'
 import * as actions from '../actions'
 
 import AuthRequired from '../components/auth-required'
+import Authorization from '../components/authorization'
 import TaskList from '../components/task-list'
 
 class TraineePage extends Component {
   render() {
-    const { user } = this.props
+    console.log('traineepage', member)
+    const { member, oidc } = this.props
     return (
       <div className='container-fluid py-4'>
-        <AuthRequired user={user}>
-        <div>{(user && user.profile) ? user.profile.name : ''}</div>
-        <TaskList {...this.props} />
+        <AuthRequired oidc={oidc}>
+          <Authorization allowSelf allowMember>
+            <div>{member ? member.name : ''}</div>
+            <TaskList {...this.props} />
+          </Authorization>
         </AuthRequired>
       </div>
     );
@@ -21,7 +25,8 @@ class TraineePage extends Component {
 
 const storeToProps = (store) => {
   return {
-    user: store.oidc ? store.oidc.user : undefined,
+    oidc: store.oidc,
+    member: store.member,
     tasks: store.tasks,
     records: store.records,
     progress: store.progress,
