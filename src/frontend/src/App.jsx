@@ -34,17 +34,6 @@ class App extends Component {
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className='ml-auto' navbar><NavItem><button className='nav-link' onClick={this.toggleAuth}>Sign {user && user.token_type ? 'out' : 'in'}</button></NavItem></Nav>
           </Collapse>
-         {/* <Collapse isOpen={this.state.isOpen} navbar>
-            <Nav className="ml-auto" navbar>
-              <NavItem>
-                <NavLink href="/components/">Components</NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink href="https://github.com/reactstrap/reactstrap">Github</NavLink>
-              </NavItem>
-            </Nav>
-          </Collapse>
-          */}
         </Navbar>
       </div>
     );

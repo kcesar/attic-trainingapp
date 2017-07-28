@@ -56,7 +56,7 @@ const router = (
       <Route exact path={baseUrl + "signup"} component={SignupPage} />
       <div className='container py-4'>
         <div className='row justify-content-center'>
-          <div style={{margin:'0 auto', textAlign:'center', padding: '5px', fontSize: '90%'}}>© 2017 - This project is open source. View it on <a href="https://github.com/kcesar/esar-training">GitHub</a></div>
+          <div style={{ margin: '0 auto', textAlign: 'center', padding: '5px', fontSize: '90%' }}>© 2017 - This project is open source. View it on <a href="https://github.com/kcesar/esar-training">GitHub</a></div>
         </div>
       </div>
     </div>
@@ -67,7 +67,7 @@ const router = (
 axios.interceptors.request.use(config => {
   const user = store.getState().oidc.user
   if (user && user.access_token) {
-     config.headers['Authorization'] = 'Bearer ' + user.access_token
+    config.headers['Authorization'] = 'Bearer ' + user.access_token
   }
   return config
 }, error => Promise.reject(error))
@@ -80,6 +80,6 @@ ReactDOM.render(
       {router}
     </OidcProvider>
   </Provider>
- , document.getElementById('root'));
+  , document.getElementById('root'));
 //registerServiceWorker();
 
