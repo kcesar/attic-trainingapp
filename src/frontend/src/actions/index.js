@@ -6,6 +6,7 @@ export const RECEIVE_RECORDS = 'RECEIVE_RECORDS'
 export const UPDATE_PROGRESS = 'UPDATE_PROGRESS'
 export const REQUEST_SESSIONS = 'REQUEST_SESSIONS'
 export const RECEIVE_SESSIONS = 'RECEIVE_SESSIONS'
+export const SIGNING_OUT = 'SIGNING_OUT'
 
 export function getUserData() {
   return (dispatch, getState) => {
@@ -45,6 +46,7 @@ export function doSignout() {
   return (dispatch, getState) => {
     var state = getState();
     if (state.oidc.user && state.oidc.user.token_type) {
+      dispatch({type: SIGNING_OUT})
       sessionStorage.setItem('redirect', window.baseUrl || '/')
       return userManager.signoutRedirect();
     }

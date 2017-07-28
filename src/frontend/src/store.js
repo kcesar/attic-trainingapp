@@ -3,11 +3,11 @@ import thunkMiddleware from 'redux-thunk'
 import { createLogger } from 'redux-logger'
 import { createBrowserHistory } from 'history'
 import { routerReducer as routing, routerMiddleware } from 'react-router-redux'
-import { reducer as oidc } from 'redux-oidc'
 
 import progress from './reducers/progress-reducer'
 import records from './reducers/records-reducer'
 import schedule from './reducers/schedule-reducer'
+import oidc from './reducers/oidc-reducer'
 
 const defaultState = {
   oidc: { user: Object.keys(sessionStorage).filter(function(i) { return i.startsWith('oidc.user')}).length ? {} : null},
