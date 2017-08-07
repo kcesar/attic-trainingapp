@@ -4,6 +4,8 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
 import marked from 'marked'
 import moment from 'moment'
 
+import Authorization from '../authorization'
+
 class Subheader extends Component {
   render() {
     return <p className='text-muted' style={{marginTop: '1rem'}}>{this.props.children}</p>
@@ -117,10 +119,10 @@ class SessionInfo extends InfoPopup {
                       (moment1.format('MMM D') + ' - ' + moment2.format(moment1.isSame(moment2, 'month') ? 'D' : 'MMM Do'))
 
 
-      let registration = blocked ? null : <div><Button style={{padding:0}} color="link">Register</Button></div>
+      let registration = blocked ? null : <Authorization allowSelf><div><Button style={{padding:0}} color="link">Register</Button></div></Authorization>
         if (signup) {
           if (s === signup) {
-            registration = <div>{s.registered === 'wait' ? 'Wait List' : 'Registered'} <Button style={{padding:0}} color="link">Leave</Button></div>
+            registration = <Authorization allowSelf><div>{s.registered === 'wait' ? 'Wait List' : 'Registered'} <Button style={{padding:0}} color="link">Leave</Button></div></Authorization>
           } else {
             registration = null
           }

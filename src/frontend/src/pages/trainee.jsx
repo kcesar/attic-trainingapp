@@ -13,7 +13,7 @@ class TraineePage extends Component {
     return (
       <div className='container-fluid py-4'>
         <AuthRequired oidc={oidc}>
-          <Authorization allowSelf allowMember>
+          <Authorization allowSelf allowMember showDenied>
             <div>{member ? member.name : ''}</div>
             <TaskList {...this.props} />
           </Authorization>
