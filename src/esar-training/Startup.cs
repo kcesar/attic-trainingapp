@@ -84,7 +84,7 @@ namespace esar_training
         app.UseExceptionHandler("/Home/Error");
       }
 
-      app.UseIdentityServerAuthentication(new IdentityServerAuthenticationOptions
+      var authOptions = new IdentityServerAuthenticationOptions
       {
         Authority = Configuration["auth:authority"],
         AutomaticAuthenticate = true,
@@ -93,7 +93,9 @@ namespace esar_training
         ApiName = "introspection",
         ApiSecret = Configuration["auth:introspection_key"],
         RequireHttpsMetadata = false
-      });
+      };
+
+      app.UseIdentityServerAuthentication(authOptions);
       app.UseStaticFiles();
       app.UseMvc();
     }

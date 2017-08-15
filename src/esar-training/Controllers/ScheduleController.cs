@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Kcesar.Training.Website.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -17,13 +18,18 @@ namespace Kcesar.Training.Website.Controllers
       _db = db;
     }
 
-    [HttpGet("/api/schedule")]
-    public async Task<object> Default()
+    [HttpGet("/api/schedule/{memberId}")]
+    public async Task<object> Default(string memberId)
     {
-      string userId = User.FindFirst("sub").Value;
+      string userMemberId = User.FindFirst("memberId").Value;
+      bool isMember = User.FindFirst(f => f.Type == "role" && f.Value == "sec.esar.members") != null;
+
+      if (!isMember && !string.Equals(userMemberId, memberId, StringComparison.OrdinalIgnoreCase)) throw new Exception("user can't see other persons schedule");
+
+      memberId = memberId ?? User.FindFirst("memberId").Value;
 
       var sessions = await _db.Offerings.Select(f => new { O = f, Current = f.Signups.Where(g => !g.OnWaitList).Count(), Waiting = f.Signups.Where(g => g.OnWaitList).Count() }).ToListAsync();
-      var signups = await _db.Signups.Where(f => f.User == userId).ToListAsync();
+      var signups = await _db.Signups.Where(f => f.MemberId == memberId).ToListAsync();
 
       return new
       {

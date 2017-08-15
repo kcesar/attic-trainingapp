@@ -32,7 +32,7 @@ export function getSchedule() {
     var state = getState()
 
     dispatch({ type: REQUEST_SESSIONS })
-    return axios.get(`${state.config.localRoot}/api/schedule`)
+    return axios.get(`${state.config.localRoot}/api/schedule/${state.member.id || state.oidc.user.profile.memberId}`)
     .then((msg) => dispatch({type: RECEIVE_SESSIONS, payload: { data: msg.data.items }}))
     .then(() => dispatch({type: UPDATE_PROGRESS, payload: getState() }))
   }
