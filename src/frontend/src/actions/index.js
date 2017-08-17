@@ -9,6 +9,8 @@ export const REQUEST_SESSIONS = 'REQUEST_SESSIONS'
 export const RECEIVE_SESSIONS = 'RECEIVE_SESSIONS'
 export const SET_MEMBER = 'SET_MEMBER'
 export const SIGNING_OUT = 'SIGNING_OUT'
+export const REQUEST_TRAINEES = 'REQUEST_TRAINEES'
+export const RECEIVE_TRAINEES = 'RECEIVE_TRAINEES'
 
 export function getUserData() {
   return (dispatch, getState) => {
@@ -59,5 +61,17 @@ export function doSignout() {
       return userManager.signoutRedirect();
     }
     return Promise.resolve()
+  }
+}
+
+export function getTraineesData() {
+  return (dispatch, getState) => {
+    var state = getState();
+
+    dispatch({type: REQUEST_TRAINEES})
+    return axios.get(`${state.config.remoteRoot}/units/${state.config.unitId}/memberships/bystatus/trainee`)
+    .then((msg) => {
+      dispatch({type: RECEIVE_TRAINEES, payload: msg.data})
+    })
   }
 }

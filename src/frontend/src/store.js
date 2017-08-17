@@ -6,6 +6,7 @@ import { routerReducer as routing, routerMiddleware } from 'react-router-redux'
 
 import progress from './reducers/progress-reducer'
 import records from './reducers/records-reducer'
+import trainees from './reducers/trainees-reducer'
 import schedule from './reducers/schedule-reducer'
 import member from './reducers/member-reducer'
 import oidc from './reducers/oidc-reducer'
@@ -30,12 +31,14 @@ const defaultState = {
       { 'title': 'Searcher First Aid', summary: "SAR specific first aid", category: 'session', prereqs: ['Course II'], hours: 9 },
       { 'title': 'Course III', summary: "Outdoor weekend - mock mission", category: 'session', prereqs: ['Searcher First Aid'], hours: 31 },
     ],
+  trainees: [],
   records: { loaded: false, loading: false},
   progress: {},
   config: Object.assign({
     localRoot: '',
     remoteRoot: 'http://localhost:4944/api2',
-    authRoot: 'http://localhost:4944/auth'
+    authRoot: 'http://localhost:4944/auth',
+    unitId: 'C2F99BB4-3056-4097-9345-4B8797F40E10'
   }, window.siteConfig)
 }
 
@@ -57,6 +60,7 @@ const rootReducer = combineReducers({
   tasks: function tasksReducer(state = [], action) { return state },
   config: function tasksReducer(state = [], action) { return state },
   records,
+  trainees,
   progress,
   schedule,
   member

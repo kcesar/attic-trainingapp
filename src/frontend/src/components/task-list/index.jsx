@@ -122,7 +122,7 @@ class SessionInfo extends InfoPopup {
       let registration = blocked ? null : <Authorization allowSelf><div><Button style={{padding:0}} color="link">Register</Button></div></Authorization>
         if (signup) {
           if (s === signup) {
-            registration = <Authorization allowSelf><div>{s.registered === 'wait' ? 'Wait List' : 'Registered'} <Button style={{padding:0}} color="link">Leave</Button></div></Authorization>
+            registration = <div>{s.registered === 'wait' ? 'Wait List' : 'Registered'} <Authorization allowSelf><Button style={{padding:0}} color="link">Leave</Button></Authorization></div>
           } else {
             registration = null
           }
