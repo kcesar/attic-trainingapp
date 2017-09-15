@@ -23,7 +23,7 @@ const defaultState = {
       { 'title': 'Course B - Map + Compass', summary: 'Indoor navigation course', category: 'session', prereqs: ['Course A'], hours: 9 },
       { 'title': 'Course B - First Aid', summary: "First aid and CPR training", category: 'session', prereqs: ['Course A'], hours: 9 },
       { 'title': 'Background Check', summary: "Sheriff's Office application", category: 'paperwork', details: 'All potential KCESAR members submit an application to the King County Sheriff\'s office, who will conduct a criminal background check on the applicant.\n\nThis status will be updated when we are informed that you have passed this check. KCESAR does not receive the result of the background check except a pass/fail from the sheriff\'s office.' },
-      { 'title': 'LFL Registration', summary: "For youth members", category: 'paperwork' },
+    //  { 'title': 'LFL Registration', summary: "For youth members", category: 'paperwork' },
       { 'title': 'Submit Photo', summary: "Submit portrait for ID card", category: 'paperwork' },
       { 'title': 'Course C', summary: "Outdoor weekend - Intro to SAR", category: 'session', hours: 32.5, prereqs: ['Course B - Map + Compass', 'Course B - First Aid', 'Background Check', 'LFL Registration'] },
       { 'title': 'Course I', summary: "Outdoor weekend - Navigation", category: 'session', prereqs: ['Course C'], hours: 31 },
