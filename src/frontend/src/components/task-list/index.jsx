@@ -165,8 +165,8 @@ class SessionInfo extends InfoPopup {
         const slotsText = `${s.current}/${s.capacity} filled` + (s.waiting ? `, ${s.waiting} waiting` : '')
         const registerText = s.current >= s.capacity || s.waiting ? 'Join Wait List' : 'Register'
         const registrationButton = s === signup
-                                       ? <Button style={{padding:0}} color="link" onClick={() => this.onClickLeave(s)}>Leave</Button>
-                                       : <Button style={{padding:0}} color="link" onClick={() => this.onClickJoin(s)}>
+                                       ? <Button disabled={this.state.leaving || this.state.joining} style={{padding:0}} color="link" onClick={() => this.onClickLeave(s)}>Leave</Button>
+                                       : <Button disabled={this.state.leaving || this.state.joining} style={{padding:0}} color="link" onClick={() => this.onClickJoin(s)}>
                                            {this.state.joining && s === this.state.joinPrompt ? <i className="fa fa-circle-o-notch fa-spin" style={{marginRight: 5}}></i> : null}
                                            {registerText}
                                          </Button>

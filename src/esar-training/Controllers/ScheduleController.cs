@@ -97,7 +97,7 @@ namespace Kcesar.Training.Website.Controllers
       var offer = await GetOfferingsQuery(_db.Offerings.Where(f => f.Id == sessionId)).SingleOrDefaultAsync();
       if (offer == null) throw new Exception("Session not found");
 
-      var existing = await _db.Signups.Where(f => f.MemberId == memberId && f.Offering.Id == sessionId).FirstOrDefaultAsync();
+      var existing = await _db.Signups.Where(f => f.MemberId == memberId && f.Offering.Id == sessionId && !f.Deleted).FirstOrDefaultAsync();
       if (existing == null) throw new Exception("Signup not found");
 
       existing.Deleted = true;
