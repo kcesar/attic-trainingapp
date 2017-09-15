@@ -26,8 +26,6 @@ import TraineePage from './pages/trainee'
 import LoggedInPage from './pages/logged-in'
 import SignupPage from './pages/signup'
 
-import OrientationPage from './pages/admin/orientation'
-
 import * as actions from './actions'
 
 const baseUrl = window.baseUrl || '/'
@@ -60,7 +58,6 @@ const router = (
         <Route exact path={baseUrl + 'admin/trainees'} component={TraineesPage} />
         <Route exact path={baseUrl + 'admin/trainees/:memberId'} component={TraineePage} />
         <Route exact path={baseUrl + "signup"} component={SignupPage} />
-        <Route exact path={baseUrl + "admin/orientation"} component={OrientationPage} />
         <div className='container py-4'>
           <div className='row justify-content-center'>
             <div style={{ margin: '0 auto', textAlign: 'center', padding: '5px', fontSize: '90%' }}>© 2017 - This project is open source. View it on <a href="https://github.com/kcesar/esar-training">GitHub</a></div>
