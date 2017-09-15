@@ -12,6 +12,9 @@ export const SIGNING_OUT = 'SIGNING_OUT'
 export const REQUEST_TRAINEES = 'REQUEST_TRAINEES'
 export const RECEIVE_TRAINEES = 'RECEIVE_TRAINEES'
 
+export const LEAVING_SESSION = 'LEAVING_SESSION'
+export const JOINING_SESSION = 'JOINING_SESSION'
+
 export function getUserData() {
   return (dispatch, getState) => {
     var state = getState();
@@ -72,6 +75,32 @@ export function getTraineesData() {
     return axios.get(`${state.config.remoteRoot}/units/${state.config.unitId}/memberships/bystatus/trainee`)
     .then((msg) => {
       dispatch({type: RECEIVE_TRAINEES, payload: msg.data})
+    })
+  }
+}
+
+export function doLeaveSession(sessionId) {
+  return (dispatch, getState) => {
+    var state = getState();
+
+    dispatch({type: LEAVING_SESSION, payload: { id: sessionId }})
+    return axios.delete(`${state.config.localRoot}/api/schedule/${state.member.id}/session/${sessionId}`)
+    .then((msg) => {
+      dispatch({type: RECEIVE_SESSIONS, payload: { data: msg.data.result.items }})
+      return msg.data
+    })
+  }
+}
+
+export function doJoinSession(sessionId) {
+  return (dispatch, getState) => {
+    var state = getState();
+
+    dispatch({type: JOINING_SESSION, payload: { id: sessionId }})
+    return axios.post(`${state.config.localRoot}/api/schedule/${state.member.id}/session/${sessionId}`)
+    .then((msg) => {
+      dispatch({type: RECEIVE_SESSIONS, payload: { data: msg.data.result.items }})
+      return msg.data
     })
   }
 }

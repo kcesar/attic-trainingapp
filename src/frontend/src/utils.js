@@ -6,7 +6,7 @@ export function isInRole(profile, role)
 
 export function isSelf(user, memberId) {
    const r = memberId ? (!!(user && user.access_token) && user.profile && user.profile.memberId &&user.profile.memberId.toLowerCase() === memberId.toLowerCase()) : false
-   console.log(r)
+  // console.log(r)
    return r
   //return true
 }

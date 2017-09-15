@@ -5,6 +5,7 @@ import { Route } from 'react-router'
 import { ConnectedRouter } from 'react-router-redux'
 import { Provider } from 'react-redux'
 import { loadUser, OidcProvider } from 'redux-oidc'
+import { GatewayProvider, GatewayDest } from 'react-gateway'
 
 import moment from 'moment'
 import momentLocalizer from 'react-widgets/lib/localizers/moment'
@@ -24,6 +25,8 @@ import TraineesPage from './pages/trainees'
 import TraineePage from './pages/trainee'
 import LoggedInPage from './pages/logged-in'
 import SignupPage from './pages/signup'
+
+import OrientationPage from './pages/admin/orientation'
 
 import * as actions from './actions'
 
@@ -46,22 +49,26 @@ store.subscribe(() => {
 
 const router = (
   <ConnectedRouter history={history} basename={baseUrl}>
-    <div>
-      <Route path={baseUrl} component={App} />
-      <Route exact path={baseUrl + "loggedIn"} component={LoggedInPage} />
-      <Route exact path={baseUrl} component={HomePage} />
-      <Route path={baseUrl + 'me'} render={watchMemberId} />
-      <Route exact path={baseUrl + "me"} component={TraineePage} />
-      <Route path={baseUrl + "admin/trainees/:memberId"} render={watchMemberId} />
-      <Route exact path={baseUrl + 'admin/trainees'} component={TraineesPage} />
-      <Route exact path={baseUrl + 'admin/trainees/:memberId'} component={TraineePage} />
-      <Route exact path={baseUrl + "signup"} component={SignupPage} />
-      <div className='container py-4'>
-        <div className='row justify-content-center'>
-          <div style={{ margin: '0 auto', textAlign: 'center', padding: '5px', fontSize: '90%' }}>© 2017 - This project is open source. View it on <a href="https://github.com/kcesar/esar-training">GitHub</a></div>
+    <GatewayProvider>
+      <div>
+        <Route path={baseUrl} component={App} />
+        <Route exact path={baseUrl + "loggedIn"} component={LoggedInPage} />
+        <Route exact path={baseUrl} component={HomePage} />
+        <Route path={baseUrl + 'me'} render={watchMemberId} />
+        <Route exact path={baseUrl + "me"} component={TraineePage} />
+        <Route path={baseUrl + "admin/trainees/:memberId"} render={watchMemberId} />
+        <Route exact path={baseUrl + 'admin/trainees'} component={TraineesPage} />
+        <Route exact path={baseUrl + 'admin/trainees/:memberId'} component={TraineePage} />
+        <Route exact path={baseUrl + "signup"} component={SignupPage} />
+        <Route exact path={baseUrl + "admin/orientation"} component={OrientationPage} />
+        <div className='container py-4'>
+          <div className='row justify-content-center'>
+            <div style={{ margin: '0 auto', textAlign: 'center', padding: '5px', fontSize: '90%' }}>© 2017 - This project is open source. View it on <a href="https://github.com/kcesar/esar-training">GitHub</a></div>
+          </div>
         </div>
+        <GatewayDest name="root" />
       </div>
-    </div>
+    </GatewayProvider>
   </ConnectedRouter>
 )
 

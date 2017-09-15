@@ -16,5 +16,9 @@ namespace Kcesar.Training.Website.Data
     public CourseOffering Offering { get; set; }
 
     public DateTimeOffset Created { get; set; }
+
+    public bool CapApplies { get; set; } = true;
+
+    public bool Deleted { get; set; } = false;
   }
 }

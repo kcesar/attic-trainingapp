@@ -37,7 +37,9 @@ const storeToProps = (store) => {
 const dispatchToProps = (dispatch, ownProps) => {
   return {
     getUserData: () => dispatch(actions.getUserData()),
-    getSchedule: () => dispatch(actions.getSchedule())
+    getSchedule: () => dispatch(actions.getSchedule()),
+    doLeaveSession: (session) => dispatch(actions.doLeaveSession(session)),
+    doJoinSession: (session) => dispatch(actions.doJoinSession(session))
   }
 }
 

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { ListGroup, ListGroupItem, ListGroupItemHeading, ListGroupItemText, Badge } from 'reactstrap'
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
+import { Gateway } from 'react-gateway'
 import marked from 'marked'
 import moment from 'moment'
 
@@ -28,19 +29,23 @@ class TaskListItem extends Component {
     const { task, schedule } = this.props
     const text = task.title
     let badge = null
-    if (schedule && schedule[task.title]) {
-      const signup = schedule[task.title].find(f => f.registered !== 'no')
-      if (signup) badge = signup.registered === 'yes' ? 'Registered' : signup.registered === 'wait' ? 'Wait List' : signup.registered
+    if (schedule && schedule.courses[task.title]) {
+      const signup = schedule.courses[task.title].filter(f => f.registered !== 'no').sort((a,b) => a.registered < b.registered);
+      if (signup.length) badge = signup[0].registered === 'yes' ? 'Registered' : signup[0].registered === 'wait' ? 'Wait List' : signup[0].registered
     }
-    return <ListItem text={text} secondary={task.summary} onClick={this.onClick} badge={badge} />
+    return <ListItem text={text} secondary={task.summary} onClick={this.onClick} badge={badge} loading={task.category === 'session' && (schedule||{}).loading} />
   }
 }
 
 class ListItem extends Component {
   render() {
-    const { text, secondary, badge } = this.props
+    const { text, secondary, badge, loading } = this.props
     return <ListGroupItem tag="button" action onClick={this.props.onClick}>
-    <ListGroupItemHeading className="justify-content-between" style={{flexWrap:'wrap'}}>{text}{badge ? <Badge pill>{badge}</Badge> : null}</ListGroupItemHeading>
+    <ListGroupItemHeading className="justify-content-between" style={{flexWrap:'wrap'}}>
+      {text}
+      {badge ? <Badge pill>{badge}</Badge> : null}
+      {loading ? <i className='fa fa-circle-o-notch fa-spin'></i> : null}
+    </ListGroupItemHeading>
     <ListGroupItemText>{secondary}</ListGroupItemText>
     </ListGroupItem>
   }
@@ -66,11 +71,11 @@ class InfoPopup extends Component {
   renderProgress() {
    const { record } = this.props
     return record && record.completed && (!record.expires || record.expires.isAfter(moment())) ?
-      <p className='text-success'>You completed this task {record.completed.fromNow()}</p> :
+      <p className='text-success'>You completed this task{record.completed === true ? '' : (' ' + record.completed.fromNow())}.</p> :
       <strong>You still need to complete this task</strong>
   }
   renderPrereqs = () => {
-    const { record, tasks, task, progress } = this.props
+    const { tasks, task, progress } = this.props
 
     const data = (task.prereqs || []).map(p =>
       <ListGroupItem key={p}>
@@ -85,9 +90,47 @@ class InfoPopup extends Component {
 }
 
 class SessionInfo extends InfoPopup {
+  state = {
+    leavePrompt: null,
+    leaving: false,
+    joinPrompt: null,
+    joining: false
+  }
+
   constructor(props) {
     super(props)
     this.renderProgress = this.renderProgress.bind(this)
+    this.onConfirmLeave = this.onConfirmLeave.bind(this)
+  }
+
+
+
+  onClickLeave = (signup) => {
+    this.setState({leavePrompt: signup})
+  }
+
+  onConfirmLeave = () => {
+    this.setState({leaving: true})
+    this.props.actions.doLeave(this.state.leavePrompt.id)
+    .then(msg => {
+      this.setState({ leavePrompt: null })
+    })
+    .catch(() => {})
+    .then(() => {
+      this.setState({leaving: false})
+    })
+  }
+
+  onClickJoin = (session) => {
+    this.setState({joining: true, joinPrompt: session})
+    this.props.actions.doJoin(session.id)
+    .then(msg => {
+      this.setState({ joinPrompt: null })
+    })
+    .catch(() => {})
+    .then(() => {
+      this.setState({joining: false})
+    })
   }
 
   renderLocation = (location) => {
@@ -96,37 +139,50 @@ class SessionInfo extends InfoPopup {
 
   renderProgress() {
     const {task, schedule, progress} = this.props
-    const sched = schedule[task.title]
+    const sched = schedule.courses[task.title]
     const baseContent = super.renderProgress()
     const prog = progress[task.title]
 
     if (!sched || prog.completed) return baseContent
 
     const blocked = prog.blocked && prog.blocked.length
-
-
-    const signup = sched.find(s => s.registered && s.registered !== 'no')
+    const registered = !!sched.find(s => s.registered === 'yes')
 
     return !sched ? baseContent : <div>
       {baseContent}
-      { blocked ? <div><small>You'll be able to register after completing the prerequisites</small></div>: null}
+      {blocked ? <div><small>You'll be able to register after completing the prerequisites</small></div>: null}
       <div>Class Schedule:</div>
       <ListGroup style={{marginBottom: '1em'}}>
+
       {sched.map(s => {
         const moment1 = moment(s.when)
         const moment2 = moment(s.when).add(task.hours, 'hour')
         const dates = moment1.isSame(moment2, 'day') ? moment1.format('MMM Do') :
                       (moment1.format('MMM D') + ' - ' + moment2.format(moment1.isSame(moment2, 'month') ? 'D' : 'MMM Do'))
 
+        var signup = sched.find(f => s.id === f.id && f.registered !== 'no')
 
-      let registration = blocked ? null : <Authorization allowSelf><div><Button style={{padding:0}} color="link">Register</Button></div></Authorization>
-        if (signup) {
-          if (s === signup) {
-            registration = <div>{s.registered === 'wait' ? 'Wait List' : 'Registered'} <Authorization allowSelf><Button style={{padding:0}} color="link">Leave</Button></Authorization></div>
-          } else {
-            registration = null
-          }
+        const slotsText = `${s.current}/${s.capacity} filled` + (s.waiting ? `, ${s.waiting} waiting` : '')
+        const registerText = s.current >= s.capacity || s.waiting ? 'Join Wait List' : 'Register'
+        const registrationButton = s === signup
+                                       ? <Button style={{padding:0}} color="link" onClick={() => this.onClickLeave(s)}>Leave</Button>
+                                       : <Button style={{padding:0}} color="link" onClick={() => this.onClickJoin(s)}>
+                                           {this.state.joining && s === this.state.joinPrompt ? <i className="fa fa-circle-o-notch fa-spin" style={{marginRight: 5}}></i> : null}
+                                           {registerText}
+                                         </Button>
+        const registrationAction = blocked ? <Authorization allowAdmin>{registrationButton}</Authorization> : <Authorization allowSelf allowAdmin>{registrationButton}</Authorization>
+        const registeredText = s === signup ? s.registered === 'wait' ? ', Wait Listed' : ', Registered' : ''
+
+        const registration = <div className='justify-content-between'><div>{slotsText}{registeredText}</div>{registrationAction}</div>
+
+/*        let registration = blocked ? null : <div><Authorization allowSelf allowAdmin><div><Button style={{padding:0}} color="link">{registerText}</Button></div></Authorization>
+        var signup = sched.find(f => s.id === f.id && f.registered !== 'no')
+        if (s === signup) {
+          registration = <div>{slotsText}, {s.registered === 'wait' ? 'Wait Listed' : 'Registered'} <Authorization allowSelf allowAdmin><Button style={{padding:0}} color="link" onClick={() => this.onClickLeave(s)}>Leave</Button></Authorization></div>
+        } else {
+          registration = <div>{slotsText}</div>
         }
+*/
         return <ListGroupItem key={s.when} style={{flexDirection: 'column', alignItems:'stretch'}}>
           <div className='justify-content-between'>
             <strong>{dates}</strong>
@@ -136,6 +192,19 @@ class SessionInfo extends InfoPopup {
         </ListGroupItem>
       })}
       </ListGroup>
+      { this.state.leavePrompt ? <Gateway into="root">
+      <Modal isOpen={true}>
+          <ModalHeader>Leave Session</ModalHeader>
+          <ModalBody>
+            <p>If you leave this session and then choose to re-register you may be placed at the end of a wait list.</p>
+            <p> Do you want to leave the {task.title} session {moment(this.state.leavePrompt.when).calendar(null, { sameElse: '[on] MMM Do' })}?</p>
+          </ModalBody>
+          <ModalFooter>
+            <Button disabled={this.state.leaving} color="danger" onClick={this.onConfirmLeave}>Leave{this.state.leaving ? <i style={{marginLeft:10}} className='fa fa-circle-o-notch fa-spin'></i> : null}</Button>
+            <Button disabled={this.state.leaving} outline color="primary" onClick={() => this.setState({leavePrompt: null})}>Cancel</Button>
+          </ModalFooter>
+        </Modal>
+      </Gateway> : null }
     </div>
   }
 }
@@ -145,7 +214,8 @@ class OnlineInfo extends InfoPopup {
 
 const infoBodyComponents = {
   session: SessionInfo,
-  online: OnlineInfo
+  online: OnlineInfo,
+  paperwork: InfoPopup
 }
 
 class TaskList extends Component {
@@ -161,21 +231,22 @@ class TaskList extends Component {
   }
 
    openTaskInfo = (task) => {
-     const { records } = this.props
-     const record = records.items[task.title]
-     this.setState({infoDialog: this.buildInfoBody(task, record), infoTitle: task.title});
+     const { progress } = this.props
+     const thisProgress = progress[task.title]
+     this.setState({infoDialog: this.buildInfoBody(task, thisProgress), infoTitle: task.title});
   };
 
    closeInfo = () => {
      this.setState({infoDialog: null, infoTitle: null})
    }
 
-   buildInfoBody = (task, record) => {
+   buildInfoBody = (task, progress) => {
      const ComponentType = infoBodyComponents[task.category]
-     return ComponentType ? <ComponentType task={task} record={record} progress={this.props.progress} schedule={this.props.schedule} /> : <div>No information</div>
+     const actions = task.category === 'session' ? { doLeave: this.props.doLeaveSession, doJoin: this.props.doJoinSession } : {}
+     return ComponentType ? <ComponentType task={task} record={progress} progress={this.props.progress} schedule={this.props.schedule} actions={actions} /> : <div>No information</div>
    }
 
-   buildListItem = (task, schedule, available) => {
+   buildListItem = (task, schedule) => {
      return <TaskListItem key={task.title} task={task} onPick={this.openTaskInfo} schedule={schedule} />
    }
 

@@ -5,14 +5,15 @@ import { isInRole, isSelf } from '../utils'
 class Authorization extends Component {
 
   render() {
-    console.log('authorize render')
-    const { memberId, user, children, allowSelf, allowMember, showDenied } = this.props
+    //console.log('authorize render')
+    const { memberId, user, children, allowSelf, allowMember, allowAdmin, showDenied } = this.props
 
     const isLoggedIn = user && user.access_token
     const asFullMember = (isLoggedIn && allowMember) && isInRole(user.profile, 'cdb.users')
+    const asAdmin = (isLoggedIn && allowAdmin) && isInRole(user.profile, 'esar.training')
     const asSelf = allowSelf && isSelf(user, memberId)
 
-    return (asFullMember || asSelf) ? <div>{children}</div> : isLoggedIn ? (showDenied ? <div>no access</div> : null) : <div>loading ...</div>
+    return (asFullMember || asSelf || asAdmin) ? <div>{children}</div> : isLoggedIn ? (showDenied ? <div>no access</div> : null) : <div>loading ...</div>
   }
 }
 

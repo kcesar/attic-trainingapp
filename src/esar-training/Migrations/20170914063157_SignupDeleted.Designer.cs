@@ -8,9 +8,10 @@ using Kcesar.Training.Website.Data;
 namespace Kcesar.Training.Website.Migrations
 {
     [DbContext(typeof(TrainingContext))]
-    partial class TrainingContextModelSnapshot : ModelSnapshot
+    [Migration("20170914063157_SignupDeleted")]
+    partial class SignupDeleted
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasDefaultSchema("trainingapp")

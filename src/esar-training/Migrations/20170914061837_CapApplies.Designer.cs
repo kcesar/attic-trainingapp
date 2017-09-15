@@ -8,9 +8,10 @@ using Kcesar.Training.Website.Data;
 namespace Kcesar.Training.Website.Migrations
 {
     [DbContext(typeof(TrainingContext))]
-    partial class TrainingContextModelSnapshot : ModelSnapshot
+    [Migration("20170914061837_CapApplies")]
+    partial class CapApplies
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasDefaultSchema("trainingapp")
@@ -43,8 +44,6 @@ namespace Kcesar.Training.Website.Migrations
                     b.Property<bool>("CapApplies");
 
                     b.Property<DateTimeOffset>("Created");
-
-                    b.Property<bool>("Deleted");
 
                     b.Property<string>("MemberId")
                         .HasColumnName("user");

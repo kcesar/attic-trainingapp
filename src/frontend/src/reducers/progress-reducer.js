@@ -17,7 +17,12 @@ const computers = {
     }
   },
   paperwork: function(task, state) {
-    return { status: null }
+    switch (task.title) {
+      case 'Background Check':
+        return { status: state.member.backgroundKnown ? 'Complete' : null, completed: !!state.member.backgroundKnown }
+      default:
+        return { status: null}
+    }
   },
   personal: function(task, state) {
     return { status: null }
