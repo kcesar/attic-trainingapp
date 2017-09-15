@@ -70,7 +70,7 @@ namespace Kcesar.Training.Website.Controllers
       if (offer == null) throw new Exception("Session not found");
       var existing = await _db.Signups.AsNoTracking().Where(f => f.MemberId == memberId && f.Offering.CourseName == offer.O.CourseName && !f.Deleted).ToListAsync();
 
-      if (existing.Any(f => f.Id == sessionId)) throw new Exception("Already registered for this session");
+      if (existing.Any(f => f.OfferingId == sessionId)) throw new Exception("Already registered for this session");
 
       bool isWaitList = offer.Waiting > 0 || offer.Current >= offer.O.Capacity;
 
