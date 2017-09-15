@@ -40,8 +40,8 @@ namespace Kcesar.Training.Website.Controllers
 
       memberId = memberId ?? User.FindFirst("memberId").Value;
 
-      var sessions = await GetOfferingsQuery(_db.Offerings).ToListAsync();
-      var signups = await _db.Signups.Where(f => f.MemberId == memberId && !f.Deleted).ToListAsync();
+      var sessions = await GetOfferingsQuery(_db.Offerings.AsNoTracking()).ToListAsync();
+      var signups = await _db.Signups.AsNoTracking().Where(f => f.MemberId == memberId && !f.Deleted).ToListAsync();
 
       return new
       {
@@ -66,9 +66,9 @@ namespace Kcesar.Training.Website.Controllers
       bool isAdmin = User.FindFirst(f => f.Type == "role" && f.Value == "esar.training") != null;
       if (!isAdmin && !string.Equals(userMemberId, memberId, StringComparison.OrdinalIgnoreCase)) throw new Exception("user can't change other persons schedule");
 
-      var offer = await GetOfferingsQuery(_db.Offerings.Where(f => f.Id == sessionId)).SingleOrDefaultAsync();
+      var offer = await GetOfferingsQuery(_db.Offerings.AsNoTracking().Where(f => f.Id == sessionId)).SingleOrDefaultAsync();
       if (offer == null) throw new Exception("Session not found");
-      var existing = await _db.Signups.Where(f => f.MemberId == memberId && f.Offering.CourseName == offer.O.CourseName && !f.Deleted).ToListAsync();
+      var existing = await _db.Signups.AsNoTracking().Where(f => f.MemberId == memberId && f.Offering.CourseName == offer.O.CourseName && !f.Deleted).ToListAsync();
 
       if (existing.Any(f => f.Id == sessionId)) throw new Exception("Already registered for this session");
 
@@ -94,7 +94,7 @@ namespace Kcesar.Training.Website.Controllers
       bool isAdmin = User.FindFirst(f => f.Type == "role" && f.Value == "esar.training") != null;
       if (!isAdmin && !string.Equals(userMemberId, memberId, StringComparison.OrdinalIgnoreCase)) throw new Exception("user can't change other persons schedule");
 
-      var offer = await GetOfferingsQuery(_db.Offerings.Where(f => f.Id == sessionId)).SingleOrDefaultAsync();
+      var offer = await GetOfferingsQuery(_db.Offerings.AsNoTracking().Where(f => f.Id == sessionId)).SingleOrDefaultAsync();
       if (offer == null) throw new Exception("Session not found");
 
       var existing = await _db.Signups.Where(f => f.MemberId == memberId && f.Offering.Id == sessionId && !f.Deleted).FirstOrDefaultAsync();
