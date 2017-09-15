@@ -171,9 +171,9 @@ class SessionInfo extends InfoPopup {
                                            {registerText}
                                          </Button>
         const registrationAction = blocked ? <Authorization allowAdmin>{registrationButton}</Authorization> : <Authorization allowSelf allowAdmin>{registrationButton}</Authorization>
-        const registeredText = s === signup ? s.registered === 'wait' ? ', Wait Listed' : ', Registered' : ''
+        const registeredText = s === signup ? s.registered === 'wait' ? <span>, <strong>Wait Listed</strong></span> : <span>, <strong>Registered</strong></span> : null
 
-        const registration = <div className='justify-content-between'><div>{slotsText}{registeredText}</div>{registrationAction}</div>
+        const registration = moment().isAfter(s.when) ? null : <div className='justify-content-between'><div>{slotsText}{registeredText}</div>{registrationAction}</div>
 
 /*        let registration = blocked ? null : <div><Authorization allowSelf allowAdmin><div><Button style={{padding:0}} color="link">{registerText}</Button></div></Authorization>
         var signup = sched.find(f => s.id === f.id && f.registered !== 'no')

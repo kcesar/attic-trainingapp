@@ -27,7 +27,7 @@ namespace Kcesar.Training.Website.Controllers
 
     private IQueryable<OfferingWithCounts> GetOfferingsQuery(IQueryable<CourseOffering> source)
     {
-      return source.Select(f => new OfferingWithCounts { O = f, Current = f.Signups.Where(g => !g.OnWaitList).Count(), Waiting = f.Signups.Where(g => g.OnWaitList).Count() });
+      return source.Select(f => new OfferingWithCounts { O = f, Current = f.Signups.Where(g => !g.OnWaitList && g.CapApplies && !g.Deleted).Count(), Waiting = f.Signups.Where(g => g.OnWaitList && !g.Deleted).Count() });
     }
 
     [HttpGet("/api/schedule/{memberId}")]
