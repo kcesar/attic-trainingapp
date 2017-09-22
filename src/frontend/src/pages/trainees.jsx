@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { ListGroup, ListGroupItem, ListGroupItemHeading, ListGroupItemText, Badge } from 'reactstrap'
+import { Link } from 'react-router-dom'
+import { ListGroup, ListGroupItem } from 'reactstrap'
 
 import * as actions from '../actions'
 
@@ -22,13 +23,14 @@ class TraineesPage extends Component {
     const list = trainees.loaded
      ? (
       <ListGroup>
-        {trainees.items.map(t => <ListGroupItem tag="a" href={config.localRoot + '/admin/trainees/' + t.member.id} action>{t.member.name}</ListGroupItem>)}
+        {trainees.items.map(t => <ListGroupItem tag={Link} to={config.localRoot + '/admin/trainees/' + t.member.id} action>{t.member.name}</ListGroupItem>)}
       </ListGroup>
      ) : <div>Loading ...</div>
 
     return <div className='container-fluid py-4'>
         <AuthRequired oidc={oidc}>
           <Authorization allowMember showDenied>
+            <Link to="/admin">&lt; Admin Home</Link>
             <div>Trainee List</div>
             {list}
           </Authorization>

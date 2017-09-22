@@ -23,6 +23,9 @@ import userManager from './user-manager'
 import HomePage from './pages/home'
 import TraineesPage from './pages/trainees'
 import TraineePage from './pages/trainee'
+import AdminHomePage from './pages/admin-home'
+import CoursesPage from './pages/course-list'
+import CourseRoster from './pages/course-roster'
 import LoggedInPage from './pages/logged-in'
 import SignupPage from './pages/signup'
 
@@ -54,9 +57,13 @@ const router = (
         <Route exact path={baseUrl} component={HomePage} />
         <Route path={baseUrl + 'me'} render={watchMemberId} />
         <Route exact path={baseUrl + "me"} component={TraineePage} />
+        <Route exact path={baseUrl + "admin"} component={AdminHomePage} />
         <Route path={baseUrl + "admin/trainees/:memberId"} render={watchMemberId} />
         <Route exact path={baseUrl + 'admin/trainees'} component={TraineesPage} />
         <Route exact path={baseUrl + 'admin/trainees/:memberId'} component={TraineePage} />
+        <Route exact path={baseUrl + 'courses'} component={CoursesPage} />
+        <Route exact path={baseUrl + 'admin/courses'} component={CoursesPage} />
+        <Route exact path={baseUrl + 'admin/courses/:courseId(\\d+)'} component={CourseRoster} />
         <Route exact path={baseUrl + "signup"} component={SignupPage} />
         <div className='container py-4'>
           <div className='row justify-content-center'>

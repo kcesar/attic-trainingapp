@@ -5,6 +5,7 @@ using Kcesar.Training.Website.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace Kcesar.Training.Website.Controllers
 {
@@ -30,8 +31,17 @@ namespace Kcesar.Training.Website.Controllers
       return source.Select(f => new OfferingWithCounts { O = f, Current = f.Signups.Where(g => !g.OnWaitList && g.CapApplies && !g.Deleted).Count(), Waiting = f.Signups.Where(g => g.OnWaitList && !g.Deleted).Count() });
     }
 
+
+    [AllowAnonymous]
+    [HttpGet("/api/schedule")]
+    public async Task<object> Get()
+    {
+      var sessions = await GetOfferingsQuery(_db.Offerings.AsNoTracking()).ToListAsync();
+      return TransformSessionList(sessions, null);
+    }
+
     [HttpGet("/api/schedule/{memberId}")]
-    public async Task<object> Default(string memberId)
+    public async Task<object> GetForMember(string memberId)
     {
       string userMemberId = User.FindFirst("memberId").Value;
       bool isMember = User.FindFirst(f => f.Type == "role" && f.Value == "sec.esar.members") != null;
@@ -43,6 +53,11 @@ namespace Kcesar.Training.Website.Controllers
       var sessions = await GetOfferingsQuery(_db.Offerings.AsNoTracking()).ToListAsync();
       var signups = await _db.Signups.AsNoTracking().Where(f => f.MemberId == memberId && !f.Deleted).ToListAsync();
 
+      return TransformSessionList(sessions, signups);
+    }
+
+    private static object TransformSessionList(List<OfferingWithCounts> sessions, List<CourseSignup> signups)
+    {
       return new
       {
         Items = sessions.GroupBy(f => f.O.CourseName, f => f).ToDictionary(g => g.Key, g => g.OrderBy(f => f.O.When).Select(f =>
@@ -54,7 +69,7 @@ namespace Kcesar.Training.Website.Controllers
           Capacity = f.O.Capacity,
           Current = Math.Min(f.Current, f.O.Capacity),
           Waiting = f.Waiting,
-          Registered = signups.Where(h => h.OfferingId == f.O.Id).Select(h => h.OnWaitList ? "wait" : "yes").FirstOrDefault() ?? "no"
+          Registered = signups == null ? null : signups.Where(h => h.OfferingId == f.O.Id).Select(h => h.OnWaitList ? "wait" : "yes").FirstOrDefault() ?? "no"
         }).ToArray())
       };
     }
@@ -84,7 +99,7 @@ namespace Kcesar.Training.Website.Controllers
       });
       await _db.SaveChangesAsync();
 
-      return Default(memberId);
+      return GetForMember(memberId);
     }
 
     [HttpDelete("/api/schedule/{memberId}/session/{sessionId}")]
@@ -104,7 +119,7 @@ namespace Kcesar.Training.Website.Controllers
       await _db.SaveChangesAsync();
 
 
-      return Default(memberId);
+      return GetForMember(memberId);
     }
   }
 }

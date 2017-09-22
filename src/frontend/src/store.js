@@ -9,6 +9,7 @@ import records from './reducers/records-reducer'
 import trainees from './reducers/trainees-reducer'
 import schedule from './reducers/schedule-reducer'
 import member from './reducers/member-reducer'
+import roster from './reducers/roster-reducer'
 import oidc from './reducers/oidc-reducer'
 
 const defaultState = {
@@ -36,8 +37,8 @@ const defaultState = {
   progress: {},
   config: Object.assign({
     localRoot: '',
-    remoteRoot: 'http://localhost:4944/api2',
-    authRoot: 'http://localhost:4944/auth',
+    remoteRoot: 'https://database.kcsara.org/api2',
+    authRoot: 'https://database.kcsara.org/auth',
     unitId: 'C2F99BB4-3056-4097-9345-4B8797F40E10'
   }, window.siteConfig)
 }
@@ -63,6 +64,7 @@ const rootReducer = combineReducers({
   trainees,
   progress,
   schedule,
+  roster,
   member
 })
 

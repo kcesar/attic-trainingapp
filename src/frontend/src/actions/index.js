@@ -11,6 +11,10 @@ export const SET_MEMBER = 'SET_MEMBER'
 export const SIGNING_OUT = 'SIGNING_OUT'
 export const REQUEST_TRAINEES = 'REQUEST_TRAINEES'
 export const RECEIVE_TRAINEES = 'RECEIVE_TRAINEES'
+export const REQUEST_TRAINEE = 'REQUEST_TRAINEE'
+export const RECEIVE_TRAINEE = 'RECEIVE_TRAINEE'
+export const REQUEST_ROSTER = 'REQUEST_ROSTER'
+export const RECEIVE_ROSTER = 'RECEIVE_ROSTER'
 
 export const LEAVING_SESSION = 'LEAVING_SESSION'
 export const JOINING_SESSION = 'JOINING_SESSION'
@@ -32,14 +36,46 @@ export function getUserData() {
   }
 }
 
-export function getSchedule() {
+export function getTrainee(memberId) {
+  return (dispatch, getState) => {
+    var state = getState();
+    let member = null
+
+    if ((state.trainees.items||[]).find(t => t.id.toLowerCase() === memberId.toLowerCase())) return Promise.resolve()
+
+    dispatch({type: REQUEST_TRAINEE, payload: { id: memberId }})
+    return axios.get(`${state.config.remoteRoot}/members/${memberId}`)
+    .then((msg) => {
+      member = msg.data
+      return axios.get(`${state.config.remoteRoot}/members/${memberId}/contacts`)
+      .then((msg) => {
+        dispatch({type: RECEIVE_TRAINEE, payload: { member, contacts: msg.data }})
+      })
+    })
+  }
+}
+
+export function getSchedule(forMember) {
   return (dispatch, getState) => {
     var state = getState()
-
-    dispatch({ type: REQUEST_SESSIONS })
-    return axios.get(`${state.config.localRoot}/api/schedule/${state.member.id || state.oidc.user.profile.memberId}`)
-    .then((msg) => dispatch({type: RECEIVE_SESSIONS, payload: { data: msg.data.items }}))
+    const memberId = forMember ? state.member.id : null
+    dispatch({ type: REQUEST_SESSIONS, payload: { memberId } })
+    return axios.get(`${state.config.localRoot}/api/schedule` + (forMember ? `/${state.member.id || state.oidc.user.profile.memberId}` : ''))
+    .then((msg) => dispatch({type: RECEIVE_SESSIONS, payload: { data: msg.data.items, memberId }}))
     .then(() => dispatch({type: UPDATE_PROGRESS, payload: getState() }))
+  }
+}
+
+export function getRoster(courseName, session) {
+  return (dispatch, getState) => {
+    var state = getState()
+    dispatch({type: REQUEST_ROSTER, payload: { courseName, session }})
+    return axios.get(`${state.config.localRoot}/api/sessions/${session.id}/roster`)
+    .then((msg) => {
+      dispatch({type: RECEIVE_ROSTER, payload: { data: msg.data, courseName, session }})
+      var requests = msg.data.map(r => getTrainee(r.memberId)(dispatch, getState))
+      return Promise.all(requests)
+    })
   }
 }
 

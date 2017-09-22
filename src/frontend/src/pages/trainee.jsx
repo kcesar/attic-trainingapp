@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 import * as actions from '../actions'
 
 import AuthRequired from '../components/auth-required'
@@ -8,11 +9,13 @@ import TaskList from '../components/task-list'
 
 class TraineePage extends Component {
   render() {
-    console.log('traineepage', member)
     const { member, oidc } = this.props
     return (
       <div className='container-fluid py-4'>
         <AuthRequired oidc={oidc}>
+          <Authorization allowMember>
+            <div><Link to="/admin/trainees">&lt; Trainees List</Link></div>
+          </Authorization>
           <Authorization allowSelf allowMember showDenied>
             <div>{member ? member.name : ''}</div>
             <TaskList {...this.props} />
@@ -37,7 +40,7 @@ const storeToProps = (store) => {
 const dispatchToProps = (dispatch, ownProps) => {
   return {
     getUserData: () => dispatch(actions.getUserData()),
-    getSchedule: () => dispatch(actions.getSchedule()),
+    getSchedule: () => dispatch(actions.getSchedule(true)),
     doLeaveSession: (session) => dispatch(actions.doLeaveSession(session)),
     doJoinSession: (session) => dispatch(actions.doJoinSession(session))
   }
