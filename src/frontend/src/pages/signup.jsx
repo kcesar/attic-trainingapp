@@ -73,7 +73,7 @@ class SignupPage extends Component {
     const { authRoot } = this.props
     const thisYear = moment().year()
     const validDate = ((this.state.birthDay === '' || this.state.birthMonth === '' || this.state.birthYear === '') || !(form['$form']||{}).submitFailed || !(form.birthdate||{}).valid)
-    return (
+    const page = (
       <LocalForm
         className='container-fluid py-4'
         onUpdate={this.handleUpdate}
@@ -201,6 +201,9 @@ class SignupPage extends Component {
         </Modal>
       </LocalForm>
     );
+
+    //return page;
+    return <div>Registration for the 2017-2018 training season is currently closed. Please check back in July 2018. Email <a href="mailto:recruiting@kcesar.org">Recruiting@kcesar.org</a> for more information.</div>
   }
 }
 
