@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using IdentityServer4.AccessTokenValidation;
 using Kcesar.Training.Website.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -41,6 +42,16 @@ namespace esar_training
 
       // Add framework services.
       services.AddMvc();
+
+      services.AddAuthentication("Bearer")
+        .AddIdentityServerAuthentication(options =>
+        {
+          options.Authority = Configuration["auth:authority"];
+          options.LegacyAudienceValidation = true;
+          options.ApiName = "introspection";
+          options.ApiSecret = Configuration["auth:introspection_key"];
+          options.RequireHttpsMetadata = false;
+        });
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -84,18 +95,7 @@ namespace esar_training
         app.UseExceptionHandler("/Home/Error");
       }
 
-      var authOptions = new IdentityServerAuthenticationOptions
-      {
-        Authority = Configuration["auth:authority"],
-        AutomaticAuthenticate = true,
-        LegacyAudienceValidation = true,
-
-        ApiName = "introspection",
-        ApiSecret = Configuration["auth:introspection_key"],
-        RequireHttpsMetadata = false
-      };
-
-      app.UseIdentityServerAuthentication(authOptions);
+      app.UseAuthentication();
       app.UseStaticFiles();
       app.UseMvc();
     }
