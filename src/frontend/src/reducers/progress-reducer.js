@@ -20,8 +20,16 @@ const computers = {
     switch (task.title) {
       case 'Background Check':
         return { status: state.member.backgroundKnown ? 'Complete' : null, completed: !!state.member.backgroundKnown }
-      default:
-        return { status: null}
+      
+        default:
+          const record = (state.records.items || [])[task.title]
+          if (record) {
+            return {
+              status: record.completed ? 'Complete' : null,
+              completed: record.completed ? moment(record.completed) : null
+            }
+          }
+          return { status: null}
     }
   },
   personal: function(task, state) {
