@@ -24,7 +24,7 @@ const defaultState = {
       { 'title': 'Course B - Map + Compass', summary: 'Indoor navigation course', category: 'session', prereqs: ['Course A'], hours: 9 },
       { 'title': 'First Aid', summary: 'American Heart (AHA), Red Cross (ARC) or equivalent First Aid card', category: 'paperwork', details: 'Submit a scan or picture of a current first aid card to training.admin@kcesar.org' },
       { 'title': 'CPR', summary: 'American Heart (AHA), Red Cross (ARC) or equivalent CPR card', category: 'paperwork', details: 'Submit a scan or picture of a current CPR card to training.admin@kcesar.org' },
-      { 'title': 'ESAR F/A - Basic', summary: '', category: 'session', hours: 9, prereqs: ['Course A', 'First Aid', 'CPR']},
+      { 'title': 'ESAR F/A - Basic', summary: '', category: 'session', hours: 3, prereqs: ['Course A', 'First Aid', 'CPR']},
       { 'title': 'ESAR F/A - Intermediate', summary: '', category: 'session', hours: 3, prereqs: ['Course B - Map + Compass', 'ESAR F/A - Basic']},
       { 'title': 'Background Check', summary: "Sheriff's Office application", category: 'paperwork', details: 'All potential KCESAR members submit an application to the King County Sheriff\'s office, who will conduct a criminal background check on the applicant.\n\nThis status will be updated when we are informed that you have passed this check. KCESAR does not receive the result of the background check except a pass/fail from the sheriff\'s office.' },
       { 'title': 'LFL Registration', summary: "For youth members", category: 'paperwork' },

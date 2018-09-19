@@ -157,7 +157,7 @@ class SessionInfo extends InfoPopup {
       {sched.map(s => {
         const moment1 = moment(s.when)
         const moment2 = moment(s.when).add(task.hours, 'hour')
-        const dates = moment1.isSame(moment2, 'day') ? moment1.format('MMM Do') :
+        const dates = moment1.isSame(moment2, 'day') ? moment1.format('MMM Do h:mma') :
                       (moment1.format('MMM D') + ' - ' + moment2.format(moment1.isSame(moment2, 'month') ? 'D' : 'MMM Do'))
 
         var signup = sched.find(f => s.id === f.id && f.registered !== 'no')
