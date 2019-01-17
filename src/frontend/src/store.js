@@ -32,7 +32,7 @@ const defaultState = {
       { 'title': 'Course C', summary: "Outdoor weekend - Intro to SAR", category: 'session', hours: 32.5, prereqs: ['Course B', 'ESAR F/A - Basic' /*, 'Background Check', 'LFL Registration'*/] },
       { 'title': 'Course I', summary: "Outdoor weekend - Navigation", category: 'session', prereqs: ['Course C'], hours: 31 },
       { 'title': 'Course II', summary: "Outdoor weekend - Evaluation", category: 'session', prereqs: ['Course I'], hours: 31 },
-      { 'title': 'ESAR F/A - Advanced', summary: "SAR specific first aid", category: 'session', prereqs: ['Course II', 'ESAR F/A - Intermediate'], hours: 3 },
+      { 'title': 'ESAR F/A - Advanced', summary: "SAR specific first aid", category: 'session', prereqs: ['Course II', 'ESAR F/A - Intermediate'], hours: 9 },
       { 'title': 'Course III', summary: "Outdoor weekend - mock mission", category: 'session', prereqs: ['ESAR F/A - Advanced', 'ICS-100', 'ICS-700'], hours: 31 },
     ],
   trainees: [],
