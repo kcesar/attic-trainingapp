@@ -5,21 +5,22 @@ import { isInRole, isSelf } from '../utils'
 class Authorization extends Component {
 
   render() {
-    //console.log('authorize render')
-    const { memberId, user, children, allowSelf, allowMember, allowAdmin, showDenied } = this.props
+    const { memberId, user, roles, children, group, allowSelf, allowMember, allowAdmin, showDenied } = this.props
 
     const isLoggedIn = user && user.access_token
-    const asFullMember = (isLoggedIn && allowMember) && isInRole(user.profile, 'cdb.users')
-    const asAdmin = (isLoggedIn && allowAdmin) && isInRole(user.profile, 'esar.training')
+    const asFullMember = (isLoggedIn && allowMember) && isInRole(roles, 'cdb.users')
+    const asAdmin = (isLoggedIn && allowAdmin) && isInRole(roles, 'esar.training')
     const asSelf = allowSelf && isSelf(user, memberId)
+    const inGroup = group && isInRole(roles, group)
 
-    return (asFullMember || asSelf || asAdmin) ? <div>{children}</div> : isLoggedIn ? (showDenied ? <div>no access</div> : null) : <div>loading ...</div>
+    return (inGroup || asFullMember || asSelf || asAdmin) ? <div>{children}</div> : isLoggedIn ? (showDenied ? <div>no access</div> : null) : <div>loading ...</div>
   }
 }
 
 const storeToProps = (store) => {
   return {
     user: (store.oidc || {}).user,
+    roles: (store.oidc || {}).roles,
     memberId: (store.member || {}).id
   }
 }

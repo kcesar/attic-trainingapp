@@ -38,7 +38,7 @@ class CourseRosterPage extends Component {
 
       const offering = titles.reduce((prevT, curT) =>
       prevT || courses[curT].reduce((prevO, curO) =>
-        prevO || (curO.id == nextState.courseId ? { title: curT, offering: curO} : null),
+        prevO || (curO.id === nextState.courseId ? { title: curT, offering: curO} : null),
         null),
       null)
 

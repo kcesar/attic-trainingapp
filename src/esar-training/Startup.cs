@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
 namespace esar_training
@@ -44,12 +45,13 @@ namespace esar_training
       services.AddMvc();
 
       services.AddAuthentication("Bearer")
-        .AddIdentityServerAuthentication(options =>
+        .AddJwtBearer(options =>
         {
           options.Authority = Configuration["auth:authority"];
-          options.LegacyAudienceValidation = true;
-          options.ApiName = "introspection";
-          options.ApiSecret = Configuration["auth:introspection_key"];
+          options.TokenValidationParameters = new TokenValidationParameters
+          {
+            ValidAudience = Configuration["auth:authority"].Trim('/') + "/resources"
+          };
           options.RequireHttpsMetadata = false;
         });
     }

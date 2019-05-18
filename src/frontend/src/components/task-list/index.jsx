@@ -53,7 +53,7 @@ class ListItem extends Component {
 
 class InfoPopup extends Component {
   render() {
-    const { task, tasks } = this.props
+    const { task } = this.props
     const pBody = this.renderProgress()
     const bBody = this.renderPrereqs()
     return <div>
@@ -75,7 +75,7 @@ class InfoPopup extends Component {
       <strong>You still need to complete this task</strong>
   }
   renderPrereqs = () => {
-    const { tasks, task, progress } = this.props
+    const { task, progress } = this.props
 
     const data = (task.prereqs || []).map(p =>
       <ListGroupItem key={p}>
@@ -146,7 +146,7 @@ class SessionInfo extends InfoPopup {
     if (!sched || prog.completed) return baseContent
 
     const blocked = prog.blocked && prog.blocked.length
-    const registered = !!sched.find(s => s.registered === 'yes')
+    //const registered = !!sched.find(s => s.registered === 'yes')
 
     return !sched ? baseContent : <div>
       {baseContent}

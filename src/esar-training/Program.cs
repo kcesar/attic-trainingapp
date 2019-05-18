@@ -11,6 +11,7 @@ namespace esar_training
     {
         public static void Main(string[] args)
         {
+            Console.WriteLine("ESAR training site " + System.Diagnostics.Process.GetCurrentProcess().Id);
             var host = new WebHostBuilder()
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())

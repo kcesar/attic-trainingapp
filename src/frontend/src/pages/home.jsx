@@ -39,13 +39,18 @@ class HomePage extends Component {
             cover everything necessary to start participating in search and rescue missions in King County and across Washington
             State. Previous training in search and rescue techniques is not required and we'll cover the basics of outdoor travel,
             navigation and first aid.</p>
-            <p>In order to participate in our training please use the sign up form and start tracking your progress.</p>
+          </div>
+        </div>
+        <div className='row'>
+          <div className='col'>
+            <p>You can learn more about the training program at <a href="http://kcesar.org/recruiting.html">our web site</a></p>
+            <p>Existing trainees can sign in below and start tracking their progress.</p>
           </div>
         </div>
         <div className='row justify-content-around'>
-          <a href="/me" className='btn btn-primary col-11 col-sm-4 my-2'>Existing Trainees</a>
-          <a href="/signup" className='btn btn-outline-primary col-11 col-sm-4 my-2'>Sign Up</a>
-        </div>
+          <a href="/me" className='btn btn-primary col-11 col-sm-4 my-2'>Trainee Signin</a>
+          {/* <a href="/signup" className='btn btn-outline-primary col-11 col-sm-4 my-2'>Sign Up</a>*/}
+        </div> 
       </div>
     );
   }

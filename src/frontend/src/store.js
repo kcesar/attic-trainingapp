@@ -13,7 +13,7 @@ import roster from './reducers/roster-reducer'
 import oidc from './reducers/oidc-reducer'
 
 const defaultState = {
-  oidc: { user: Object.keys(sessionStorage).filter(function(i) { return i.startsWith('oidc.user')}).length ? {} : null},
+  oidc: { signedIn: false, user: Object.keys(sessionStorage).filter(function(i) { return i.startsWith('oidc.user')}).length ? {} : null},
   routing: {},
   tasks: [
       { 'title': 'Contact Information', summary: 'Address, Email, Phone Number', category: 'personal' },
@@ -41,8 +41,8 @@ const defaultState = {
   progress: {},
   config: Object.assign({
     localRoot: '',
-    remoteRoot: 'https://database.kcsara.org/api2',
-    authRoot: 'https://database.kcsara.org/auth',
+    remoteRoot: 'http://localhost:4944/api2',
+    authRoot: 'http://localhost:5100',
     unitId: 'C2F99BB4-3056-4097-9345-4B8797F40E10'
   }, window.siteConfig)
 }

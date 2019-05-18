@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { ListGroup, ListGroupItem, ListGroupItemHeading, ListGroupItemText } from 'reactstrap'
+import { ListGroup, ListGroupItem } from 'reactstrap'
 
 import AuthRequired from '../components/auth-required'
 import Authorization from '../components/authorization'
@@ -16,6 +16,9 @@ class AdminHomePage extends Component {
             <ListGroup>
               <ListGroupItem tag={Link} to="/admin/trainees" action>List of Trainees</ListGroupItem>
               <ListGroupItem tag={Link} to="/admin/courses" action>Course List</ListGroupItem>
+              <Authorization group="acct-managers">
+                <ListGroupItem tag={Link} to="/admin/register" action>Register Trainee</ListGroupItem>
+              </Authorization>
             </ListGroup>
           </Authorization>
         </AuthRequired>

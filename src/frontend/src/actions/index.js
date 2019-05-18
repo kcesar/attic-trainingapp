@@ -1,6 +1,5 @@
 import axios from 'axios'
 import userManager from '../user-manager'
-import { isInRole } from '../utils'
 
 export const REQUEST_RECORDS = 'REQUEST_RECORDS'
 export const RECEIVE_RECORDS = 'RECEIVE_RECORDS'
@@ -9,12 +8,15 @@ export const REQUEST_SESSIONS = 'REQUEST_SESSIONS'
 export const RECEIVE_SESSIONS = 'RECEIVE_SESSIONS'
 export const SET_MEMBER = 'SET_MEMBER'
 export const SIGNING_OUT = 'SIGNING_OUT'
+export const RECEIVE_ROLES = 'RECEIVE_ROLES'
 export const REQUEST_TRAINEES = 'REQUEST_TRAINEES'
 export const RECEIVE_TRAINEES = 'RECEIVE_TRAINEES'
 export const REQUEST_TRAINEE = 'REQUEST_TRAINEE'
 export const RECEIVE_TRAINEE = 'RECEIVE_TRAINEE'
 export const REQUEST_ROSTER = 'REQUEST_ROSTER'
 export const RECEIVE_ROSTER = 'RECEIVE_ROSTER'
+
+export const UPLOAD_TRAINING_DOCUMENT = 'ADD_TRAINING_DOCUMENT'
 
 export const LEAVING_SESSION = 'LEAVING_SESSION'
 export const JOINING_SESSION = 'JOINING_SESSION'
@@ -88,6 +90,18 @@ export function doSignin(targetUrl) {
       return userManager.signinRedirect();
     }
     return Promise.resolve()
+  }
+}
+
+export function getRoles(userId) {
+  return (dispatch, getState) => {
+    var state = getState()
+    return axios.get(`${state.config.authRoot}/Account/${userId}/Groups`)
+    .then((msg) => {
+      dispatch({type: RECEIVE_ROLES, payload: { roles: msg.data.data, userId }})
+    //  var requests = msg.data.map(r => getTrainee(r.memberId)(dispatch, getState))
+    //  return Promise.all(requests)
+    })
   }
 }
 

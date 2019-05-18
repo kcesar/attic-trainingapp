@@ -16,7 +16,7 @@ import './assets/bootstrap.min.css'
 import './index.css'
 
 import App from './App'
-import registerServiceWorker from './registerServiceWorker'
+//import registerServiceWorker from './registerServiceWorker'
 import store, { history } from './store'
 import userManager from './user-manager'
 
@@ -27,7 +27,7 @@ import AdminHomePage from './pages/admin-home'
 import CoursesPage from './pages/course-list'
 import CourseRoster from './pages/course-roster'
 import LoggedInPage from './pages/logged-in'
-import SignupPage from './pages/signup'
+import RegistrationPage from './pages/registration'
 
 import * as actions from './actions'
 
@@ -61,13 +61,13 @@ const router = (
         <Route path={baseUrl + "admin/trainees/:memberId"} render={watchMemberId} />
         <Route exact path={baseUrl + 'admin/trainees'} component={TraineesPage} />
         <Route exact path={baseUrl + 'admin/trainees/:memberId'} component={TraineePage} />
+        <Route exact path={baseUrl + 'admin/register'} component={RegistrationPage} />
         <Route exact path={baseUrl + 'courses'} component={CoursesPage} />
         <Route exact path={baseUrl + 'admin/courses'} component={CoursesPage} />
         <Route exact path={baseUrl + 'admin/courses/:courseId(\\d+)'} component={CourseRoster} />
-        <Route exact path={baseUrl + "signup"} component={SignupPage} />
         <div className='container py-4'>
           <div className='row justify-content-center'>
-            <div style={{ margin: '0 auto', textAlign: 'center', padding: '5px', fontSize: '90%' }}>© 2017 - This project is open source. View it on <a href="https://github.com/kcesar/esar-training">GitHub</a></div>
+            <div style={{ margin: '0 auto', textAlign: 'center', padding: '5px', fontSize: '90%' }}>© 2019 - This project is open source. View it on <a href="https://github.com/kcesar/esar-training">GitHub</a></div>
           </div>
         </div>
         <GatewayDest name="root" />

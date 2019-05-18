@@ -16,7 +16,6 @@
     },
     "esar_training": {
       "commandName": "Project",
-      "launchBrowser": true,
       "launchUrl": "http://localhost:8320",
       "environmentVariables": {
         "ASPNETCORE_URLS": "http://*:8320",

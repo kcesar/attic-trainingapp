@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import userManager from '../user-manager'
+import * as actions from '../actions'
 
 class AuthRequired extends Component {
   constructor(props) {
@@ -12,9 +14,13 @@ class AuthRequired extends Component {
   }
 
   loginIfNeeded() {
-    const { oidc } = this.props
-    if (oidc.user || oidc.signingOut) {
+    const { oidc, getRoles } = this.props
+    if (oidc.roles || oidc.signingOut) {
       return
+    }
+
+    if (oidc.user && oidc.user.profile) {
+      return getRoles(oidc.user.profile.sub)
     }
 
     sessionStorage.setItem('redirect', window.location.pathname + window.location.search + window.location.hash)
@@ -23,8 +29,21 @@ class AuthRequired extends Component {
 
   render() {
     const { oidc } = this.props || {}
+    if (oidc.expired) return <div><strong>Your session has timed out.</strong></div>
     return (<div>{(oidc.user && oidc.user.token_type) ? this.props.children : null }</div>)
   }
 }
 
-export default AuthRequired
+const storeToProps = (store) => {
+  return {
+    oidc: store.oidc
+  }
+}
+
+const dispatchToProps = (dispatch, ownProps) => {
+  return {
+    getRoles: (userId) => dispatch(actions.getRoles(userId)),
+  }
+}
+
+export default connect(storeToProps, dispatchToProps)(AuthRequired);
