@@ -70,14 +70,6 @@ echo Handling ASP.NET Core Web Application deployment.
 call :ExecuteCmd dotnet restore "%DEPLOYMENT_SOURCE%\src\esar-training\esar-training.csproj"
 IF !ERRORLEVEL! NEQ 0 goto error
 
-pushd "%DEPLOYMENT_SOURCE%\src\frontend"
-call npm install --no-optional
-if "%ERRORLEVEL%" NEQ "0" exit /b %ERRORLEVEL%
-call npm run build
-if "%ERRORLEVEL%" NEQ "0" exit /b %ERRORLEVEL%
-robocopy /MIR build "%DEPLOYMENT_SOURCE%\src\esar-training\wwwroot"
-popd
-
 :: 2. Build and publish
 call :ExecuteCmd dotnet publish "%DEPLOYMENT_SOURCE%\src\esar-training\esar-training.csproj" --output "%DEPLOYMENT_TEMP%" --configuration Release
 IF !ERRORLEVEL! NEQ 0 goto error
