@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.Configuration;
+using System.Security.Claims;
 
 namespace Kcesar.Training.Website.Controllers
 {
@@ -18,15 +19,20 @@ namespace Kcesar.Training.Website.Controllers
   public class TraineesController : BaseController
   {
     private readonly TrainingContext _db;
+    private readonly RolesService rolesSvc;
 
-    public TraineesController(TrainingContext db, IConfigurationRoot config, ILogger<TraineesController> logger) : base(config, logger)
+    public TraineesController(TrainingContext db, RolesService rolesSvc, IConfigurationRoot config, ILogger<TraineesController> logger) : base(config, logger)
     {
       _db = db;
+      this.rolesSvc = rolesSvc;
     }
 
     [HttpPost("trainees")]
     public async Task<object> CreateTrainee([FromBody] CreateTraineeInfo details)
     {
+      var roles = rolesSvc.ListAllRolesForAccount(new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+      if (!roles.Contains("esar.training.admin")) return Forbid();
+
       if (string.IsNullOrWhiteSpace(details.First)) throw new ArgumentException("first name is required");
       if (string.IsNullOrWhiteSpace(details.Last)) throw new ArgumentException("last name is required");
       if (details.BirthDate < DateTimeOffset.Now.AddYears(-100) || details.BirthDate > DateTime.Now.AddYears(-10))

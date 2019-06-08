@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using IdentityServer4.AccessTokenValidation;
+using Kcesar.Training.Website;
 using Kcesar.Training.Website.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -40,6 +41,7 @@ namespace esar_training
       services.AddSingleton(Configuration);
 
       services.AddDbContext<TrainingContext>(options => options.UseSqlServer(Configuration["database"], o => o.MigrationsHistoryTable("__Migrations", "trainingapp")));
+      services.AddMemoryCache();
 
       // Add framework services.
       services.AddMvc();
@@ -54,6 +56,8 @@ namespace esar_training
           };
           options.RequireHttpsMetadata = false;
         });
+
+      services.AddSingleton<RolesService>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

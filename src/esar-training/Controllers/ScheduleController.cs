@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace Kcesar.Training.Website.Controllers
 {
@@ -13,10 +14,12 @@ namespace Kcesar.Training.Website.Controllers
   public class ScheduleController : Controller
   {
     private readonly TrainingContext _db;
+    private readonly RolesService rolesSvc;
 
-    public ScheduleController(TrainingContext db)
+    public ScheduleController(TrainingContext db, RolesService rolesSvc)
     {
       _db = db;
+      this.rolesSvc = rolesSvc;
     }
 
     class OfferingWithCounts
@@ -44,7 +47,8 @@ namespace Kcesar.Training.Website.Controllers
     public async Task<object> GetForMember(string memberId)
     {
       string userMemberId = User.FindFirst("memberId").Value;
-      bool isMember = User.FindFirst(f => f.Type == "role" && f.Value == "sec.esar.members") != null;
+      var roles = rolesSvc.ListAllRolesForAccount(new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+      bool isMember = roles.Contains("sec.esar.members");
 
       if (!isMember && !string.Equals(userMemberId, memberId, StringComparison.OrdinalIgnoreCase)) throw new Exception("user can't see other persons schedule");
 
@@ -78,7 +82,9 @@ namespace Kcesar.Training.Website.Controllers
     public async Task<object> Register(string memberId, int sessionId)
     {
       string userMemberId = User.FindFirst("memberId").Value;
-      bool isAdmin = User.FindFirst(f => f.Type == "role" && f.Value == "esar.training") != null;
+      var roles = rolesSvc.ListAllRolesForAccount(new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+
+      bool isAdmin = roles.Contains("esar.training.admin");
       if (!isAdmin && !string.Equals(userMemberId, memberId, StringComparison.OrdinalIgnoreCase)) throw new Exception("user can't change other persons schedule");
 
       var offer = await GetOfferingsQuery(_db.Offerings.AsNoTracking().Where(f => f.Id == sessionId)).SingleOrDefaultAsync();
@@ -106,7 +112,9 @@ namespace Kcesar.Training.Website.Controllers
     public async Task<object> Leave(string memberId, int sessionId)
     {
       string userMemberId = User.FindFirst("memberId").Value;
-      bool isAdmin = User.FindFirst(f => f.Type == "role" && f.Value == "esar.training") != null;
+
+      var roles = rolesSvc.ListAllRolesForAccount(new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+      bool isAdmin = roles.Contains("esar.training.admin");
       if (!isAdmin && !string.Equals(userMemberId, memberId, StringComparison.OrdinalIgnoreCase)) throw new Exception("user can't change other persons schedule");
 
       var offer = await GetOfferingsQuery(_db.Offerings.AsNoTracking().Where(f => f.Id == sessionId)).SingleOrDefaultAsync();
