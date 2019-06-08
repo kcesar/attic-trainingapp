@@ -5,7 +5,7 @@ import { Gateway } from 'react-gateway'
 import marked from 'marked'
 import moment from 'moment'
 
-import Authorization from '../authorization'
+import Authorization from './authorization'
 
 class Subheader extends Component {
   render() {

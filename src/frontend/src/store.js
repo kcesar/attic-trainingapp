@@ -1,8 +1,6 @@
 import { createStore, applyMiddleware, combineReducers } from 'redux'
 import thunkMiddleware from 'redux-thunk'
 import { createLogger } from 'redux-logger'
-import { createBrowserHistory } from 'history'
-import { routerReducer as routing, routerMiddleware } from 'react-router-redux'
 
 import progress from './reducers/progress-reducer'
 import records from './reducers/records-reducer'
@@ -14,7 +12,6 @@ import oidc from './reducers/oidc-reducer'
 
 const defaultState = {
   oidc: { signedIn: false, user: Object.keys(sessionStorage).filter(function(i) { return i.startsWith('oidc.user')}).length ? {} : null},
-  routing: {},
   tasks: [
       { 'title': 'Contact Information', summary: 'Address, Email, Phone Number', category: 'personal' },
       { 'title': 'Emergency Contacts', summary: 'Who to call in an emergency', category: 'personal' },
@@ -47,10 +44,7 @@ const defaultState = {
   }, window.siteConfig)
 }
 
-export const history = createBrowserHistory()
-
 const middleware = [
-  routerMiddleware(history),
   thunkMiddleware
 ]
 
@@ -60,7 +54,6 @@ if(process.env.NODE_ENV === 'development' || (localStorage && localStorage.showL
 }
 
 const rootReducer = combineReducers({
-  routing,
   oidc,
   tasks: function tasksReducer(state = [], action) { return state },
   config: function tasksReducer(state = [], action) { return state },

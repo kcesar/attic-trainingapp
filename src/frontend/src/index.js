@@ -1,80 +1,17 @@
-import 'babel-polyfill/dist/polyfill.js'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Route } from 'react-router'
-import { ConnectedRouter } from 'react-router-redux'
 import { Provider } from 'react-redux'
-import { loadUser, OidcProvider } from 'redux-oidc'
-import { GatewayProvider, GatewayDest } from 'react-gateway'
-
-import moment from 'moment'
-import momentLocalizer from 'react-widgets/lib/localizers/moment'
+import { loadUser } from 'redux-oidc'
 import axios from 'axios'
 
-import 'react-widgets/dist/css/react-widgets.css'
-import './assets/bootstrap.min.css'
+import 'bootstrap/dist/css/bootstrap.min.css'
 import './index.css'
-
 import App from './App'
-//import registerServiceWorker from './registerServiceWorker'
-import store, { history } from './store'
+import './App.css'
+
+import store from './store'
 import userManager from './user-manager'
-
-import HomePage from './pages/home'
-import TraineesPage from './pages/trainees'
-import TraineePage from './pages/trainee'
-import AdminHomePage from './pages/admin-home'
-import CoursesPage from './pages/course-list'
-import CourseRoster from './pages/course-roster'
-import LoggedInPage from './pages/logged-in'
-import RegistrationPage from './pages/registration'
-
-import * as actions from './actions'
-
-const baseUrl = window.baseUrl || '/'
-
-momentLocalizer(moment)
-
-const watchMemberId = props => {
-  console.log('watchMemberId')
-  const { member, oidc } = store.getState()
-  const memberId = ((props.match || {}).params || {}).memberId || (((oidc||{}).user||{}).profile||{}).memberId
-  if (memberId !== (member||{}).id) {
-    store.dispatch({type: actions.SET_MEMBER, payload: { id: memberId } })
-  }
-  return null
-}
-store.subscribe(() => {
-  watchMemberId({match: { params: { memberId: store.getState().member.id }}})
-})
-
-const router = (
-  <ConnectedRouter history={history} basename={baseUrl}>
-    <GatewayProvider>
-      <div>
-        <Route path={baseUrl} component={App} />
-        <Route exact path={baseUrl + "loggedIn"} component={LoggedInPage} />
-        <Route exact path={baseUrl} component={HomePage} />
-        <Route path={baseUrl + 'me'} render={watchMemberId} />
-        <Route exact path={baseUrl + "me"} component={TraineePage} />
-        <Route exact path={baseUrl + "admin"} component={AdminHomePage} />
-        <Route path={baseUrl + "admin/trainees/:memberId"} render={watchMemberId} />
-        <Route exact path={baseUrl + 'admin/trainees'} component={TraineesPage} />
-        <Route exact path={baseUrl + 'admin/trainees/:memberId'} component={TraineePage} />
-        <Route exact path={baseUrl + 'admin/register'} component={RegistrationPage} />
-        <Route exact path={baseUrl + 'courses'} component={CoursesPage} />
-        <Route exact path={baseUrl + 'admin/courses'} component={CoursesPage} />
-        <Route exact path={baseUrl + 'admin/courses/:courseId(\\d+)'} component={CourseRoster} />
-        <div className='container py-4'>
-          <div className='row justify-content-center'>
-            <div style={{ margin: '0 auto', textAlign: 'center', padding: '5px', fontSize: '90%' }}>© 2019 - This project is open source. View it on <a href="https://github.com/kcesar/esar-training">GitHub</a></div>
-          </div>
-        </div>
-        <GatewayDest name="root" />
-      </div>
-    </GatewayProvider>
-  </ConnectedRouter>
-)
+import * as serviceWorker from './serviceWorker'
 
 // Where should this go?
 axios.interceptors.request.use(config => {
@@ -87,12 +24,14 @@ axios.interceptors.request.use(config => {
 
 loadUser(store, userManager)
 
+
 ReactDOM.render(
   <Provider store={store}>
-    <OidcProvider store={store} userManager={userManager}>
-      {router}
-    </OidcProvider>
-  </Provider>
-  , document.getElementById('root'));
-//registerServiceWorker();
+    <App />
+  </Provider>,
+  document.getElementById('root'));
 
+// If you want your app to work offline and load faster, you can change
+// unregister() to register() below. Note this comes with some pitfalls.
+// Learn more about service workers: https://bit.ly/CRA-PWA
+serviceWorker.unregister();

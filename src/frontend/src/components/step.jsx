@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types';
 import './step.css'
 
 export default class Step extends Component {
@@ -16,11 +15,5 @@ export default class Step extends Component {
         </div>
       </section>
     )
-  }
-
-  static propTypes = {
-    step: PropTypes.number,
-    title: PropTypes.string,
-    children: PropTypes.node,
   }
 }

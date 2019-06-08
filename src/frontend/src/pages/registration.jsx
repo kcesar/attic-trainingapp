@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { push } from 'react-router-redux'
 import { FormGroup, Label, Input } from 'reactstrap'
 import moment from 'moment'
 
@@ -227,7 +226,7 @@ class RegistrationPage extends Component {
   }
 
   throttledUserSearch = () => {
-    if (!(/^[a-zA-Z][a-zA-Z\.\-]+$/.test(this.state.username))) {
+    if (!(/^[a-zA-Z][a-zA-Z.-]+$/.test(this.state.username))) {
       this.setState({usernameOk: false})
       return
     }
@@ -337,7 +336,7 @@ class RegistrationPage extends Component {
                 </FormGroup>
               </div>
               :
-              <div>Existing member {this.state.memberName} <a target='_blank' href={this.props.config.remoteRoot.replace("/api2", `/members/detail/${this.state.memberId}`)}>database</a></div>
+              <div>Existing member {this.state.memberName} <a target='_blank' rel="noopener noreferrer" href={this.props.config.remoteRoot.replace("/api2", `/members/detail/${this.state.memberId}`)}>database</a></div>
               }
               {this.state.newMember ?
               <div className='row'>
@@ -361,7 +360,7 @@ class RegistrationPage extends Component {
                 {this.state.memberQueryToken != null ? <div>Searching ...</div> : null}
                 {this.state.memberSearchList.length > 0 ? <div>Possible existing members:</div> : null}
                 {this.state.memberSearchList.map(m => (
-                  <div key={m.summary.id}>{m.summary.name} <button onClick={() => this.useMember(m.summary)} >use</button> <a target='_blank' href={this.props.config.remoteRoot.replace("/api2", `/members/detail/${m.summary.id}`)}>database</a></div>
+                  <div key={m.summary.id}>{m.summary.name} <button onClick={() => this.useMember(m.summary)} >use</button> <a target='_blank' rel="noopener noreferrer" href={this.props.config.remoteRoot.replace("/api2", `/members/detail/${m.summary.id}`)}>database</a></div>
                 ))}
               </div>
             </Step>
@@ -422,8 +421,7 @@ const storeToProps = (store) => {
 
 const dispatchToProps = (dispatch, ownProps) => {
   return {
-    getUserData: () => dispatch(actions.getUserData()),
-    goToDashboard: () => dispatch(push('/me'))
+    getUserData: () => dispatch(actions.getUserData())
   }
 }
 

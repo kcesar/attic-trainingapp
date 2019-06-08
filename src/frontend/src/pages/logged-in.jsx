@@ -1,12 +1,12 @@
 import React from 'react';
+import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
 import { CallbackComponent } from 'redux-oidc';
-import { push } from 'react-router-redux';
 import userManager from '../user-manager';
 
 class CallbackPage extends React.Component {
   successCallback = () => {
-    this.props.dispatch(push(sessionStorage.redirect || '/'));
+    this.props.history.push(sessionStorage.redirect || '/');
   }
 
   render() {
@@ -27,4 +27,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(null, mapDispatchToProps)(CallbackPage);
+export default withRouter(connect(null, mapDispatchToProps)(CallbackPage));
