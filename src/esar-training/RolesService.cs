@@ -26,7 +26,10 @@ namespace Kcesar.Training.Website
       clientId = config["apis:client_id"];
       clientSecret = config["apis:client_secret"];
       url = config["apis:accounts"];
-      scope = config["apis:scope"];
+      scope = config["apis:scopes"];
+
+      logger.LogInformation($"Service started. Will query {url} using token from {authority} (client_id={clientId}, scopes={scope})");
+      if (string.IsNullOrWhiteSpace(scope)) logger.LogError("apis:scopes configuration is empty");
       this.cache = cache;
       this.logger = logger;
     }
