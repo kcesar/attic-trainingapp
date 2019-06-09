@@ -4,6 +4,7 @@ using System.Net.Http;
 using IdentityModel.Client;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -17,8 +18,9 @@ namespace Kcesar.Training.Website
     private readonly string url;
     private readonly string scope;
     private readonly IMemoryCache cache;
+    private readonly ILogger<RolesService> logger;
 
-    public RolesService(IConfigurationRoot config, IMemoryCache cache)
+    public RolesService(IConfigurationRoot config, IMemoryCache cache, ILogger<RolesService> logger)
     {
       authority = config["auth:authority"].Trim('/');
       clientId = config["apis:client_id"];
@@ -26,6 +28,7 @@ namespace Kcesar.Training.Website
       url = config["apis:accounts"];
       scope = config["apis:scope"];
       this.cache = cache;
+      this.logger = logger;
     }
 
 
@@ -42,8 +45,28 @@ namespace Kcesar.Training.Website
 
       var http = new HttpClient();
       http.SetBearerToken(token.AccessToken);
-      var json = http.GetStringAsync(authority + $"/Account/{accountId}/Groups").Result;
-      var payload = JsonConvert.DeserializeObject<JObject>(json);
+
+      string json;
+      try
+      {
+        json = http.GetStringAsync(authority + $"/Account/{accountId}/Groups").Result;
+      }
+      catch (Exception e)
+      {
+        logger.LogError(e, "Failed to get groups. My access token: " + token.AccessToken);
+        throw new InvalidOperationException("Failed to get group membership");
+      }
+
+      JObject payload;
+      try
+      {
+        payload = JsonConvert.DeserializeObject<JObject>(json);
+      }
+      catch (Exception e)
+      {
+        logger.LogError(e, "Failed to parse response: " + json);
+        throw new InvalidOperationException("Failed to parse group membership");
+      }
 
       var list = payload["data"].ToObject<List<string>>();
       lock (cache)
