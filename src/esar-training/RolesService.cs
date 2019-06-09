@@ -45,6 +45,11 @@ namespace Kcesar.Training.Website
 
       TokenClient client = new TokenClient(authority + "/connect/token", clientId, clientSecret, style: AuthenticationStyle.PostValues);
       var token = client.RequestClientCredentialsAsync(scope).Result;
+      if (string.IsNullOrWhiteSpace(token.AccessToken))
+      {
+        logger.LogError($"Failed to get access token using client id {clientId} and scopes {scope}: {JsonConvert.SerializeObject(token)}");
+        throw new InvalidOperationException("Server error");
+      }
 
       var http = new HttpClient();
       http.SetBearerToken(token.AccessToken);

@@ -146,6 +146,9 @@ class RegistrationPage extends Component {
       })
       this.loadMember(msg.data.memberId)
     })
+    .catch(reason => {
+      alert("Failed to create member in database");
+    })
     .finally(msg => {
       this.setState({ creatingMemberToken: null })
     })
