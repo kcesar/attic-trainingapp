@@ -27,7 +27,7 @@ namespace Kcesar.Training.Website.Controllers
       this.rolesSvc = rolesSvc;
     }
 
-    [HttpPost("trainees")]
+    [HttpPost("/api/trainees")]
     public async Task<object> CreateTrainee([FromBody] CreateTraineeInfo details)
     {
       var roles = rolesSvc.ListAllRolesForAccount(new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
@@ -79,7 +79,7 @@ namespace Kcesar.Training.Website.Controllers
       };
     }
 
-    [HttpPost("trainees/{memberId}/invite")]
+    [HttpPost("/api/trainees/{memberId}/invite")]
     public async Task<object> Invite(string memberId, [FromQuery] string username) {
       var token = await GetTokenAsync(_config["apis:scopes"]);
 

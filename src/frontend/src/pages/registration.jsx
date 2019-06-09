@@ -132,7 +132,7 @@ class RegistrationPage extends Component {
       gender: this.state.gender
     }
 
-    axios.post(`${this.props.config.localRoot}/trainees`, postData, {
+    axios.post(`${this.props.config.localRoot}/api/trainees`, postData, {
       cancelToken: new CancelToken(function executor(c) {
         // An executor function receives a cancel function as a parameter
         cancelToken = c;
@@ -285,7 +285,7 @@ class RegistrationPage extends Component {
 
   sendInvitation = (memberId, username) => {
     this.setState({sendingInvite: true})
-    var url = `${this.props.config.localRoot}/trainees/${memberId}/invite`
+    var url = `${this.props.config.localRoot}/api/trainees/${memberId}/invite`
     if (username) url += `?username=${username}`
     axios.post(url, {})
     .catch(() => {
