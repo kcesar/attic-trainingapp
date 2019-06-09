@@ -30,6 +30,7 @@ namespace Kcesar.Training.Website.Controllers
     [HttpPost("/api/trainees")]
     public async Task<object> CreateTrainee([FromBody] CreateTraineeInfo details)
     {
+      _logger.LogInformation($"User {User.FindFirst(ClaimTypes.NameIdentifier)?.Value} is trying to create user {JsonConvert.SerializeObject(details)}");
       var roles = rolesSvc.ListAllRolesForAccount(new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
       if (!roles.Contains("esar.training.admin")) return Forbid();
 
@@ -42,7 +43,7 @@ namespace Kcesar.Training.Website.Controllers
       var apiRoot = _config["apis:database"].TrimEnd('/');
 
       // Create the member in the database
-      var responseJson = await this.BearerPostAsync(
+      var responseJson = await BearerPostAsync(
          $"{apiRoot}/members",
         dbToken,
         new

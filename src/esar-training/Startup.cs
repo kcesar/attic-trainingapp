@@ -15,14 +15,11 @@ namespace esar_training
 {
   public class Startup
   {
-    public Startup(IHostingEnvironment env)
-    {
-      Log.Logger = new LoggerConfiguration()
-        .MinimumLevel.Debug()
-        .WriteTo.RollingFile(Path.Combine(env.ContentRootPath, "log-{Date}.txt"))
-        .CreateLogger();
+    private readonly ILogger<Startup> logger;
 
-      Log.Logger.Information($"Starting site. Environment: {env.EnvironmentName}");
+    public Startup(IHostingEnvironment env, ILogger<Startup> logger)
+    {
+      logger.LogInformation($"Starting site. Environment: {env.EnvironmentName}");
 
       var builder = new ConfigurationBuilder()
           .SetBasePath(env.ContentRootPath)
@@ -31,6 +28,7 @@ namespace esar_training
           .AddJsonFile($"appsettings.local.json", optional: true)
           .AddEnvironmentVariables();
       Configuration = builder.Build();
+      this.logger = logger;
     }
 
     public IConfigurationRoot Configuration { get; }
@@ -72,7 +70,7 @@ namespace esar_training
       }
       else
       {
-        Log.Logger.Information("Inserting HTTPS redirect middleware");
+        logger.LogInformation("Inserting HTTPS redirect middleware");
         app.Use(async (context, next) =>
         {
           if (context.Request.IsHttps)
@@ -82,7 +80,7 @@ namespace esar_training
           else
           {
             var withHttps = string.Format("https://{0}{1}", context.Request.Host, context.Request.PathBase);
-            Log.Logger.Information($"Redirecting to {withHttps}");
+            logger.LogInformation($"Redirecting to {withHttps}");
             context.Response.Redirect(withHttps);
           }
         });
