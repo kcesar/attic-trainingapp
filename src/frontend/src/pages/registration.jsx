@@ -199,6 +199,9 @@ class RegistrationPage extends Component {
     .then(msg => {
       this.setState({email: msg.data.value, emailId: msg.data.id })
     })
+    .catch(reason => {
+      alert("Failed to create email in database");
+    })
     .finally(() => {
       this.setState({creatingEmailToken: null })
     })
@@ -221,6 +224,9 @@ class RegistrationPage extends Component {
     })
     .then(msg => {
       this.setState({phone: msg.data.value, phoneId: msg.data.id })
+    })
+    .catch(reason => {
+      alert("Failed to create phone in database");
     })
     .finally(() => {
       this.setState({creatingPhoneToken: null })
@@ -271,14 +277,12 @@ class RegistrationPage extends Component {
     })
     .then(msg => {
       this.setState({userAccounts: [ msg.data.data ]})
+      return this.sendInvitation(this.state.memberId, this.state.username)
     })
     .finally(() => {
       this.setState({creatingUserToken: null })
     })
     this.setState({ creatingUserToken: cancelToken })
-
-
-
 
     window.setTimeout(() => {
       this.setState({creatingUserToken: null })
