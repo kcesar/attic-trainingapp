@@ -48,13 +48,13 @@ namespace Kcesar.Training.Website.Controllers
       return reactHtml;
     }
 
-    [HttpGet("")]
-    [HttpGet("me")]
-    [HttpGet("loggedIn")]
-    [HttpGet("admin/{*path}")]
-    public IActionResult React()
-    {
-      return Content(GetReactHtml(), "text/html");
-    }
+    //[HttpGet("")]
+    //[HttpGet("me")]
+    //[HttpGet("loggedIn")]
+    //[HttpGet("admin/{*path}")]
+    //public IActionResult React()
+    //{
+    //  return Content(GetReactHtml(), "text/html");
+    //}
   }
 }

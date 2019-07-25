@@ -4,6 +4,7 @@ using Kcesar.Training.Website;
 using Kcesar.Training.Website.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -56,6 +57,11 @@ namespace esar_training
         });
 
       services.AddSingleton<RolesService>();
+
+      services.AddSpaStaticFiles(configuration =>
+      {
+        configuration.RootPath = "frontend/build";
+      });
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -70,27 +76,24 @@ namespace esar_training
       }
       else
       {
-        logger.LogInformation("Inserting HTTPS redirect middleware");
-        app.Use(async (context, next) =>
-        {
-          if (context.Request.IsHttps)
-          {
-            await next();
-          }
-          else
-          {
-            var withHttps = string.Format("https://{0}{1}", context.Request.Host, context.Request.PathBase);
-            logger.LogInformation($"Redirecting to {withHttps}");
-            context.Response.Redirect(withHttps);
-          }
-        });
-
         app.UseExceptionHandler("/Home/Error");
       }
 
       app.UseAuthentication();
       app.UseStaticFiles();
+      app.UseSpaStaticFiles();
+
       app.UseMvc();
+
+      app.UseSpa(spa =>
+      {
+        spa.Options.SourcePath = "frontend";
+
+        if (env.IsDevelopment())
+        {
+          spa.UseReactDevelopmentServer(npmScript: "start");
+        }
+      });
     }
   }
 }

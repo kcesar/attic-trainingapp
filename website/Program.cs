@@ -14,6 +14,7 @@ namespace esar_training
     public static void Main(string[] args)
     {
       Console.WriteLine("ESAR training site " + System.Diagnostics.Process.GetCurrentProcess().Id);
+      Console.Title = $"ESAR training {System.Diagnostics.Process.GetCurrentProcess().Id}";
       BuildWebHost(args).Run();
     }
 
