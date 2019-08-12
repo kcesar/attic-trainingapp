@@ -4,10 +4,8 @@ import { Link } from 'react-router-dom'
 import { Table } from 'reactstrap'
 import moment from 'moment'
 
+import AuthRoute from '../components/auth/AuthRoute'
 import * as actions from '../actions'
-
-import AuthRequired from '../components/auth-required'
-import Authorization from '../components/authorization'
 
 class CourseRosterPage extends Component {
   constructor(props) {
@@ -38,7 +36,7 @@ class CourseRosterPage extends Component {
 
       const offering = titles.reduce((prevT, curT) =>
       prevT || courses[curT].reduce((prevO, curO) =>
-        prevO || (curO.id === nextState.courseId ? { title: curT, offering: curO} : null),
+        prevO || (curO.id === parseInt(nextState.courseId, 10) ? { title: curT, offering: curO} : null),
         null),
       null)
 
@@ -81,19 +79,17 @@ class CourseRosterPage extends Component {
     const course = this.state.offering || {}
     const session = course.offering
     
-    return <div className='container-fluid py-4'>
-        <AuthRequired oidc={oidc}>
-          <Authorization allowMember showDenied>
-            <Link to="/admin/courses">&lt; Course List</Link>
-            <div>Course Roster for {course.title || <i className='fa fa-spin fa-circle-o-notch'></i>}</div>
-            {session ? <div>{moment(session.when).format("HHmm ddd MMM Do")}</div> : null}
-            {this.state.loaded && roster.loaded ?
-              this.renderTable(roster)
-              : <div>Loading ...</div>
-            }
-          </Authorization>
-        </AuthRequired>
-      </div>
+    return (<div className='container-fluid py-4'>
+      <AuthRoute oidc={oidc} denied='Access denied'>
+        <Link to="/admin/courses">&lt; Course List</Link>
+        <div>Course Roster for {course.title || <i className='fa fa-spin fa-circle-o-notch'></i>}</div>
+        {session ? <div>{moment(session.when).format("HHmm ddd MMM Do")}</div> : null}
+        {this.state.loaded && roster.loaded ?
+          this.renderTable(roster)
+          : <div>Loading ...</div>
+        }
+      </AuthRoute>
+    </div>)
   }
 }
 

@@ -1,9 +1,10 @@
-﻿using System.IO;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Kcesar.Training.Website.Controllers
 {
@@ -16,45 +17,52 @@ namespace Kcesar.Training.Website.Controllers
       _webRoot = env.WebRootPath;
     }
 
-    static string reactHtml = null;
-    static object reactLock = new object();
-    string GetReactHtml()
+    [HttpGet("/react-config")]
+    public IActionResult ReactConfig([FromServices] IConfiguration config)
     {
-      if (reactHtml == null)
+      object me = null;
+      object oidc = null;
+      if (User.Identity.IsAuthenticated)
       {
-        lock (reactLock)
+        string userId = User.FindFirstValue("sub");
+        me = new
         {
-          if (reactHtml == null)
+          UserId = userId
+        };
+        oidc = new
+        {
+          User = new
           {
-            var authConfig = JsonConvert.SerializeObject(new
+            Profile = new
             {
-              authority = _config["auth:authority"]
-            });
-            var config = JsonConvert.SerializeObject(new
-            {
-              localRoot = "",
-              remoteRoot = _config["apis:database"],
-              authRoot = _config["apis:accounts"]
-            });
-
-            reactHtml = System.IO.File.ReadAllText(Path.Combine(_webRoot, "index.html")).Replace("<head>", $"<head>" +
-              $"<base href=\"{_config["baseUrl"] ?? Url.Content("~/")}\"/>" +
-              $"<script>window.baseUrl = \"{Url.Content("~/")}\";" +
-              $"window.siteAuth = {authConfig};" +
-              $"window.siteConfig = {config};</script>");
+              Name = User.FindFirstValue("name"),
+              Sub = userId
+            }
           }
-        }
+        };
       }
-      return reactHtml;
-    }
 
-    //[HttpGet("")]
-    //[HttpGet("me")]
-    //[HttpGet("loggedIn")]
-    //[HttpGet("admin/{*path}")]
-    //public IActionResult React()
-    //{
-    //  return Content(GetReactHtml(), "text/html");
-    //}
+      return Content("window.reactConfig = " + JsonConvert.SerializeObject(new
+      {
+        auth = new
+        {
+          authority = config["auth:authority"],
+          client_id = config["apis:frontend:client_id"]
+        },
+        apis = new
+        {
+          accounts = new
+          {
+            url = (config["apis:accounts"] ?? "").TrimEnd('/')
+          },
+          data = new
+          {
+            url = (config["apis:database"] ?? "").TrimEnd('/')
+          }
+        },
+        me,
+        oidc
+      }, new JsonSerializerSettings() { ContractResolver = new CamelCasePropertyNamesContractResolver() }));
+    }
   }
 }

@@ -39,7 +39,7 @@ namespace Kcesar.Training.Website.Controllers
       if (details.BirthDate < DateTimeOffset.Now.AddYears(-100) || details.BirthDate > DateTime.Now.AddYears(-10))
         throw new ArgumentException("birthdate is out of range");
 
-      var dbToken = await GetTokenAsync(_config["apis:scopes"]);
+      var dbToken = await GetTokenAsync(_config["apis:backend:scopes"]);
       var apiRoot = _config["apis:database"].TrimEnd('/');
 
       // Create the member in the database
@@ -82,7 +82,7 @@ namespace Kcesar.Training.Website.Controllers
 
     [HttpPost("/api/trainees/{memberId}/invite")]
     public async Task<object> Invite(string memberId, [FromQuery] string username) {
-      var token = await GetTokenAsync(_config["apis:scopes"]);
+      var token = await GetTokenAsync(_config["apis:backend:scopes"]);
 
       var responseJson = await BearerGetAsync(
         $"{_config["apis:accounts"].TrimEnd('/')}/account/formember/{memberId}",

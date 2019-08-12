@@ -26,10 +26,10 @@ export function getUserData() {
     var state = getState();
 
     dispatch({type: REQUEST_RECORDS})
-    return axios.get(`${state.config.remoteRoot}/members/${state.member.id || state.oidc.user.profile.memberId}`)
+    return axios.get(`${state.config.apis.data.url}/members/${state.member.id || state.oidc.user.profile.memberId}`)
     .then((msg) => {
       dispatch({type: SET_MEMBER, payload: msg.data})
-      return axios.get(`${state.config.remoteRoot}/members/${state.member.id || state.oidc.user.profile.memberId}/trainingrecords`)
+      return axios.get(`${state.config.apis.data.url}/members/${state.member.id || state.oidc.user.profile.memberId}/trainingrecords`)
     })
     .then((msg) =>
       dispatch({type: RECEIVE_RECORDS, payload: {data: msg.data.items, filterNames: state.tasks.map(t => t.title)}}))
@@ -46,10 +46,10 @@ export function getTrainee(memberId) {
     if ((state.trainees.items||[]).find(t => t.id.toLowerCase() === memberId.toLowerCase())) return Promise.resolve()
 
     dispatch({type: REQUEST_TRAINEE, payload: { id: memberId }})
-    return axios.get(`${state.config.remoteRoot}/members/${memberId}`)
+    return axios.get(`${state.config.apis.data.url}/members/${memberId}`)
     .then((msg) => {
       member = msg.data
-      return axios.get(`${state.config.remoteRoot}/members/${memberId}/contacts`)
+      return axios.get(`${state.config.apis.data.url}/members/${memberId}/contacts`)
       .then((msg) => {
         dispatch({type: RECEIVE_TRAINEE, payload: { member, contacts: msg.data }})
       })
@@ -62,7 +62,7 @@ export function getSchedule(forMember) {
     var state = getState()
     const memberId = forMember ? state.member.id : null
     dispatch({ type: REQUEST_SESSIONS, payload: { memberId } })
-    return axios.get(`${state.config.localRoot}/api/schedule` + (forMember ? `/${state.member.id || state.oidc.user.profile.memberId}` : ''))
+    return axios.get(`${state.config.apis.training.url}/api/schedule` + (forMember ? `/${state.member.id || state.oidc.user.profile.memberId}` : ''))
     .then((msg) => dispatch({type: RECEIVE_SESSIONS, payload: { data: msg.data.items, memberId }}))
     .then(() => dispatch({type: UPDATE_PROGRESS, payload: getState() }))
   }
@@ -72,7 +72,7 @@ export function getRoster(courseName, session) {
   return (dispatch, getState) => {
     var state = getState()
     dispatch({type: REQUEST_ROSTER, payload: { courseName, session }})
-    return axios.get(`${state.config.localRoot}/api/sessions/${session.id}/roster`)
+    return axios.get(`${state.config.apis.training.url}/api/sessions/${session.id}/roster`)
     .then((msg) => {
       dispatch({type: RECEIVE_ROSTER, payload: { data: msg.data, courseName, session }})
       var requests = msg.data.map(r => getTrainee(r.memberId)(dispatch, getState))
@@ -96,7 +96,7 @@ export function doSignin(targetUrl) {
 export function getRoles(userId) {
   return (dispatch, getState) => {
     var state = getState()
-    return axios.get(`${state.config.authRoot}/Account/${userId}/Groups`)
+    return axios.get(`${state.config.apis.accounts.url}/Account/${userId}/Groups`)
     .then((msg) => {
       dispatch({type: RECEIVE_ROLES, payload: { roles: msg.data.data, userId }})
     //  var requests = msg.data.map(r => getTrainee(r.memberId)(dispatch, getState))
@@ -122,7 +122,7 @@ export function getTraineesData() {
     var state = getState();
 
     dispatch({type: REQUEST_TRAINEES})
-    return axios.get(`${state.config.remoteRoot}/units/${state.config.unitId}/memberships/bystatus/trainee`)
+    return axios.get(`${state.config.apis.data.url}/units/${state.config.unitId}/memberships/bystatus/trainee`)
     .then((msg) => {
       dispatch({type: RECEIVE_TRAINEES, payload: msg.data})
     })
@@ -134,7 +134,7 @@ export function doLeaveSession(sessionId) {
     var state = getState();
 
     dispatch({type: LEAVING_SESSION, payload: { id: sessionId }})
-    return axios.delete(`${state.config.localRoot}/api/schedule/${state.member.id}/session/${sessionId}`)
+    return axios.delete(`${state.config.apis.training.url}/api/schedule/${state.member.id}/session/${sessionId}`)
     .then((msg) => {
       dispatch({type: RECEIVE_SESSIONS, payload: { data: msg.data.result.items }})
       return msg.data
@@ -147,7 +147,7 @@ export function doJoinSession(sessionId) {
     var state = getState();
 
     dispatch({type: JOINING_SESSION, payload: { id: sessionId }})
-    return axios.post(`${state.config.localRoot}/api/schedule/${state.member.id}/session/${sessionId}`)
+    return axios.post(`${state.config.apis.training.url}/api/schedule/${state.member.id}/session/${sessionId}`)
     .then((msg) => {
       dispatch({type: RECEIVE_SESSIONS, payload: { data: msg.data.result.items }})
       return msg.data

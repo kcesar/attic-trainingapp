@@ -68,8 +68,8 @@ namespace Kcesar.Training.Website.Controllers
       var httpArgs = new Dictionary<string, string>
         {
           { "grant_type", "client_credentials" },
-          { "client_id", _config["apis:client_id"] },
-          { "client_secret", _config["apis:client_secret"] },
+          { "client_id", _config["apis:backend:client_id"] },
+          { "client_secret", _config["apis:backend:client_secret"] },
           { "scope", scope }
         };
       var httpBody = new FormUrlEncodedContent(httpArgs);

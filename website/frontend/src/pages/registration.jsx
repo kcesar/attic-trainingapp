@@ -4,8 +4,7 @@ import { FormGroup, Label, Input } from 'reactstrap'
 import moment from 'moment'
 
 import Step from '../components/step'
-import AuthRequired from '../components/auth-required'
-import Authorization from '../components/authorization'
+import AuthRoute from '../components/auth/AuthRoute'
 
 import * as actions from '../actions'
 import axios, { CancelToken } from 'axios';
@@ -101,7 +100,7 @@ class RegistrationPage extends Component {
     this.memberLookupTimer && clearTimeout(this.memberLookupTimer);
     this.memberLookupTimer = setTimeout(() => {
       let cancelToken;
-      axios.get(`${this.props.config.remoteRoot}/search?t=Member&q=${this.state.lastname}`, {
+      axios.get(`${this.props.config.apis.data.url}/search?t=Member&q=${this.state.lastname}`, {
         cancelToken: new CancelToken(function executor(c) {
           // An executor function receives a cancel function as a parameter
           cancelToken = c;
@@ -132,7 +131,7 @@ class RegistrationPage extends Component {
       gender: this.state.gender
     }
 
-    axios.post(`${this.props.config.localRoot}/api/trainees`, postData, {
+    axios.post(`${this.props.config.apis.training.url}/api/trainees`, postData, {
       cancelToken: new CancelToken(function executor(c) {
         // An executor function receives a cancel function as a parameter
         cancelToken = c;
@@ -158,9 +157,9 @@ class RegistrationPage extends Component {
   loadMember = (memberId) => {
     this.setState({loadingMember: true})
     axios.all([
-      axios.get(`${this.props.config.remoteRoot}/members/${memberId}/contacts`),
-      axios.get(`${this.props.config.remoteRoot}/members/${memberId}/trainingrecords`),
-      axios.get(`${this.props.config.authRoot}/account/formember/${memberId}`)
+      axios.get(`${this.props.config.apis.data.url}/members/${memberId}/contacts`),
+      axios.get(`${this.props.config.apis.data.url}/members/${memberId}/trainingrecords`),
+      axios.get(`${this.props.config.apis.accounts.url}/account/formember/${memberId}`)
     ])
     .then(axios.spread(function (contacts, trainings, accounts) {
       var emails = contacts.data.filter(f => f.type === 'email')
@@ -190,7 +189,7 @@ class RegistrationPage extends Component {
       value: this.state.email
     }
     console.log("create email", postData)
-    axios.post(`${this.props.config.remoteRoot}/members/${this.state.memberId}/contacts`, postData, {
+    axios.post(`${this.props.config.apis.data.url}/members/${this.state.memberId}/contacts`, postData, {
       cancelToken: new CancelToken(function executor(c) {
         // An executor function receives a cancel function as a parameter
         cancelToken = c;
@@ -216,7 +215,7 @@ class RegistrationPage extends Component {
       value: this.state.phone
     }
     console.log("create phone", postData)
-    axios.post(`${this.props.config.remoteRoot}/members/${this.state.memberId}/contacts`, postData, {
+    axios.post(`${this.props.config.apis.data.url}/members/${this.state.memberId}/contacts`, postData, {
       cancelToken: new CancelToken(function executor(c) {
         // An executor function receives a cancel function as a parameter
         cancelToken = c;
@@ -242,7 +241,7 @@ class RegistrationPage extends Component {
     this.usernameLookupTimer && clearTimeout(this.usernameLookupTimer);
     this.usernameLookupTimer = setTimeout(() => {
       let cancelToken;
-      axios.get(`${this.props.config.authRoot}/account/checkname/${this.state.username}`, {
+      axios.get(`${this.props.config.apis.accounts.url}/account/checkname/${this.state.username}`, {
         cancelToken: new CancelToken(function executor(c) {
           // An executor function receives a cancel function as a parameter
           cancelToken = c;
@@ -269,7 +268,7 @@ class RegistrationPage extends Component {
       memberId: this.state.memberId
     }
     console.log("create user", postData)
-    axios.post(`${this.props.config.authRoot}/account`, postData, {
+    axios.post(`${this.props.config.apis.accounts.url}/account`, postData, {
       cancelToken: new CancelToken(function executor(c) {
         // An executor function receives a cancel function as a parameter
         cancelToken = c;
@@ -292,7 +291,7 @@ class RegistrationPage extends Component {
 
   sendInvitation = (memberId, username) => {
     this.setState({sendingInvite: true})
-    var url = `${this.props.config.localRoot}/api/trainees/${memberId}/invite`
+    var url = `${this.props.config.apis.training.url}/api/trainees/${memberId}/invite`
     if (username) url += `?username=${username}`
     axios.post(url, {})
     .catch(() => {
@@ -323,97 +322,95 @@ class RegistrationPage extends Component {
     }
 
     return (
-      <AuthRequired oidc={oidc}>
-        <Authorization group="acct-managers" showDenied>
-          <div className='container-fluid py-4'>
-            <Step step={1} title='Find / Create Member'>
-              {this.state.newMember ?
-              <div className='row'>
-                <FormGroup className='col-12 col-md'>
-                  <Label for='lastname'>Last Name</Label>
-                  <Input name='lastname' value={this.state.lastname} onChange={this.changeLast} readOnly={!!this.state.memberId} />
-                </FormGroup>
-                <FormGroup className='col-12 col-md'>
-                  <Label for='firstname'>First Name</Label>
-                  <Input name='firstname' value={this.state.firstname} onChange={this.changeFirst} readOnly={!!this.state.memberId} />
-                </FormGroup>
-                <FormGroup className='col-12 col-md'>
-                  <Label for='middlename'>Middle Name</Label>
-                  <Input name='middlename' value={this.state.middlename} onChange={this.changeMiddle} readOnly={!!this.state.memberId} />
-                </FormGroup>
-              </div>
-              :
-              <div>Existing member {this.state.memberName} <a target='_blank' rel="noopener noreferrer" href={this.props.config.remoteRoot.replace("/api2", `/members/detail/${this.state.memberId}`)}>database</a></div>
+      <AuthRoute oidc={oidc} roles='acct-managers' denied='Access denied'>
+        <div className='container-fluid py-4'>
+          <Step step={1} title='Find / Create Member'>
+            {this.state.newMember ?
+            <div className='row'>
+              <FormGroup className='col-12 col-md'>
+                <Label for='lastname'>Last Name</Label>
+                <Input name='lastname' value={this.state.lastname} onChange={this.changeLast} readOnly={!!this.state.memberId} />
+              </FormGroup>
+              <FormGroup className='col-12 col-md'>
+                <Label for='firstname'>First Name</Label>
+                <Input name='firstname' value={this.state.firstname} onChange={this.changeFirst} readOnly={!!this.state.memberId} />
+              </FormGroup>
+              <FormGroup className='col-12 col-md'>
+                <Label for='middlename'>Middle Name</Label>
+                <Input name='middlename' value={this.state.middlename} onChange={this.changeMiddle} readOnly={!!this.state.memberId} />
+              </FormGroup>
+            </div>
+            :
+            <div>Existing member {this.state.memberName} <a target='_blank' rel="noopener noreferrer" href={this.props.config.apis.data.url.replace("/api2", `/members/detail/${this.state.memberId}`)}>database</a></div>
+            }
+            {this.state.newMember ?
+            <div className='row'>
+              <FormGroup className='col-12 col-md'>
+                <Label for='birthdate'>Birth Date (yyyy-mm-dd)</Label>
+                <Input name='birthdate' value={this.state.birthdate} onChange={this.changeBirth} readOnly={!!this.state.memberId} />
+              </FormGroup>
+              <FormGroup className='col-12 col-md'>
+                <Label for='gender'>Gender</Label>
+                <Input type="select" name="gender" value={this.state.gender} onChange={this.changeGender} disabled={!!this.state.memberId}>
+                  <option value="unknown">Unknown / Other</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </Input>
+              </FormGroup>
+            </div> : null}
+            {this.state.newMember && !this.state.memberId ?
+              <button className="btn btn-primary" disabled={this.state.creatingMember} onClick={this.createMember}>Create Member{this.state.creatingMemberToken ? <span> <i className='fa fa-fw fa-spin fa-spinner'></i></span> : null}</button>
+              : null}
+            <div>
+              {this.state.memberQueryToken != null ? <div>Searching ...</div> : null}
+              {this.state.memberSearchList.length > 0 ? <div>Possible existing members:</div> : null}
+              {this.state.memberSearchList.map(m => (
+                <div key={m.summary.id}>{m.summary.name} <button onClick={() => this.useMember(m.summary)} >use</button> <a target='_blank' rel="noopener noreferrer" href={this.props.config.apis.data.url.replace("/api2", `/members/detail/${m.summary.id}`)}>database</a></div>
+              ))}
+            </div>
+          </Step>
+          <Step step={2} title='Contact Information'>
+            {!this.state.memberId ? null :
+            <div className='row'>
+              <FormGroup className='col-12 col-md'>
+                <Label for='email'>Email</Label>
+                <Input name='email' value={this.state.email} onChange={this.changeEmail} readOnly={!!this.state.emailId} />
+                {this.state.emailId ? null : <button className="btn btn-primary" disabled={this.state.creatingEmailToken} onClick={this.createEmail}>Save{this.state.creatingEmailToken ? <span> <i className='fa fa-fw fa-spin fa-spinner'></i></span> : null}</button>}
+              </FormGroup>
+              <FormGroup className='col-12 col-md'>
+                <Label for='phone'>Cell Number</Label>
+                <Input name='phone' value={this.state.phone} onChange={this.changePhone} readOnly={!!this.state.phoneId} />
+                {this.state.phoneId ? null : <button className="btn btn-primary" disabled={this.state.creatingPhoneToken} onClick={this.createPhone}>Save{this.state.creatingPhoneToken ? <span> <i className='fa fa-fw fa-spin fa-spinner'></i></span> : null}</button>}
+              </FormGroup>
+            </div>}
+          </Step>
+          <Step step={3} title='Prerequisite Training'>
+            {trainingDom}
+          </Step>
+          <Step step={4} title='User Account'>
+            {!this.state.memberId ? null :
+              this.state.userAccounts.length
+                ? <div>
+                    {this.state.userAccounts.length && !this.state.username ? <div>This user already has one or more accounts:</div> : null }
+                    {this.state.userAccounts.map(a => <ExistingAccountRow key={a.id} account={a} memberId={this.state.memberId} sendInvitation={this.state.username ? null : this.sendInvitation} sendingInvite={this.state.sendingInvite} />)}
+                  </div>
+                : <div>
+                    <div className='row'>
+                      <FormGroup className='col-6 col-md'>
+                        <Label for='username'>Username</Label>
+                        <Input name='username' value={this.state.username} onChange={this.changeUsername} />
+                      </FormGroup>
+                    </div>
+                    <div>
+                      <button className="btn btn-primary" disabled={!(this.state.emailId && this.state.username && this.state.usernameOk)} onClick={this.createUser}>Create User{this.state.creatingUser ? <span> <i className='fa fa-fw fa-spin fa-spinner'></i></span> : null}</button>
+                      {this.state.usernameOk ? null : <div className="text-danger">Username is invalid or already exists</div> }
+                      {this.state.emailId ? null : <div className="text-warning">Member needs at least one email</div> }
+                    </div>
+                  </div>
               }
-              {this.state.newMember ?
-              <div className='row'>
-                <FormGroup className='col-12 col-md'>
-                  <Label for='birthdate'>Birth Date (yyyy-mm-dd)</Label>
-                  <Input name='birthdate' value={this.state.birthdate} onChange={this.changeBirth} readOnly={!!this.state.memberId} />
-                </FormGroup>
-                <FormGroup className='col-12 col-md'>
-                  <Label for='gender'>Gender</Label>
-                  <Input type="select" name="gender" value={this.state.gender} onChange={this.changeGender} disabled={!!this.state.memberId}>
-                    <option value="unknown">Unknown / Other</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                  </Input>
-                </FormGroup>
-              </div> : null}
-              {this.state.newMember && !this.state.memberId ?
-                <button className="btn btn-primary" disabled={this.state.creatingMember} onClick={this.createMember}>Create Member{this.state.creatingMemberToken ? <span> <i className='fa fa-fw fa-spin fa-spinner'></i></span> : null}</button>
-               : null}
-              <div>
-                {this.state.memberQueryToken != null ? <div>Searching ...</div> : null}
-                {this.state.memberSearchList.length > 0 ? <div>Possible existing members:</div> : null}
-                {this.state.memberSearchList.map(m => (
-                  <div key={m.summary.id}>{m.summary.name} <button onClick={() => this.useMember(m.summary)} >use</button> <a target='_blank' rel="noopener noreferrer" href={this.props.config.remoteRoot.replace("/api2", `/members/detail/${m.summary.id}`)}>database</a></div>
-                ))}
-              </div>
-            </Step>
-            <Step step={2} title='Contact Information'>
-              {!this.state.memberId ? null :
-              <div className='row'>
-                <FormGroup className='col-12 col-md'>
-                  <Label for='email'>Email</Label>
-                  <Input name='email' value={this.state.email} onChange={this.changeEmail} readOnly={!!this.state.emailId} />
-                  {this.state.emailId ? null : <button className="btn btn-primary" disabled={this.state.creatingEmailToken} onClick={this.createEmail}>Save{this.state.creatingEmailToken ? <span> <i className='fa fa-fw fa-spin fa-spinner'></i></span> : null}</button>}
-                </FormGroup>
-                <FormGroup className='col-12 col-md'>
-                  <Label for='phone'>Cell Number</Label>
-                  <Input name='phone' value={this.state.phone} onChange={this.changePhone} readOnly={!!this.state.phoneId} />
-                  {this.state.phoneId ? null : <button className="btn btn-primary" disabled={this.state.creatingPhoneToken} onClick={this.createPhone}>Save{this.state.creatingPhoneToken ? <span> <i className='fa fa-fw fa-spin fa-spinner'></i></span> : null}</button>}
-                </FormGroup>
-              </div>}
-            </Step>
-            <Step step={3} title='Prerequisite Training'>
-              {trainingDom}
-            </Step>
-            <Step step={4} title='User Account'>
-              {!this.state.memberId ? null :
-                this.state.userAccounts.length
-                  ? <div>
-                      {this.state.userAccounts.length && !this.state.username ? <div>This user already has one or more accounts:</div> : null }
-                      {this.state.userAccounts.map(a => <ExistingAccountRow key={a.id} account={a} memberId={this.state.memberId} sendInvitation={this.state.username ? null : this.sendInvitation} sendingInvite={this.state.sendingInvite} />)}
-                    </div>
-                  : <div>
-                      <div className='row'>
-                        <FormGroup className='col-6 col-md'>
-                          <Label for='username'>Username</Label>
-                          <Input name='username' value={this.state.username} onChange={this.changeUsername} />
-                        </FormGroup>
-                      </div>
-                      <div>
-                        <button className="btn btn-primary" disabled={!(this.state.emailId && this.state.username && this.state.usernameOk)} onClick={this.createUser}>Create User{this.state.creatingUser ? <span> <i className='fa fa-fw fa-spin fa-spinner'></i></span> : null}</button>
-                        {this.state.usernameOk ? null : <div className="text-danger">Username is invalid or already exists</div> }
-                        {this.state.emailId ? null : <div className="text-warning">Member needs at least one email</div> }
-                      </div>
-                    </div>
-                }
-            </Step>
-          </div>
-        </Authorization>
-      </AuthRequired>
+          </Step>
+        </div>
+      </AuthRoute>
     )
   }
 }

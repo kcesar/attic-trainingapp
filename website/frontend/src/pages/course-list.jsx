@@ -5,10 +5,8 @@ import { ListGroup, ListGroupItem, ListGroupItemHeading, ListGroupItemText, Tabl
 
 import moment from 'moment'
 
+import AuthRoute from '../components/auth/AuthRoute'
 import * as actions from '../actions'
-
-import AuthRequired from '../components/auth-required'
-import Authorization from '../components/authorization'
 
 class CourseListPage extends Component {
   constructor(props) {
@@ -43,11 +41,9 @@ class CourseListPage extends Component {
                     <td>{o.current}</td>
                     <td>{o.waiting}</td>
                     <td>
-                      <AuthRequired oidc={oidc}>
-                      <Authorization allowMember>
-                        <Link to={`${config.localRoot}/admin/courses/${o.id}`}>Roster</Link>
-                      </Authorization>
-                    </AuthRequired>
+                      <AuthRoute oidc={oidc} roles='cdb.users' denied=''>
+                        <Link to={`${config.apis.training.url}/admin/courses/${o.id}`}>Roster</Link>
+                      </AuthRoute>
                     </td>
                     </tr>
                  )}
@@ -62,13 +58,11 @@ class CourseListPage extends Component {
     )
 
     return <div className='container-fluid py-4'>
-        <AuthRequired oidc={oidc}>
-          <Authorization allowMember showDenied>
-            <Link to="/admin">&lt; Admin Home</Link>
-            <div>Course List</div>
-            {list}
-          </Authorization>
-        </AuthRequired>
+      <AuthRoute oidc={oidc} denied='Access denied'>
+        <Link to="/admin">&lt; Admin Home</Link>
+        <div>Course List</div>
+        {list}
+      </AuthRoute>
       </div>
   }
 }

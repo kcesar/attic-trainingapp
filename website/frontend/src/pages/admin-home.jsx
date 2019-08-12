@@ -3,26 +3,23 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { ListGroup, ListGroupItem } from 'reactstrap'
 
-import AuthRequired from '../components/auth-required'
-import Authorization from '../components/authorization'
+import AuthRoute from '../components/auth/AuthRoute'
 
 class AdminHomePage extends Component {
   render() {
     const { oidc } = this.props
 
     return <div className='container-fluid py-4'>
-        <AuthRequired oidc={oidc}>
-          <Authorization allowMember showDenied>
-            <ListGroup>
-              <ListGroupItem tag={Link} to="/admin/trainees" action>List of Trainees</ListGroupItem>
-              <ListGroupItem tag={Link} to="/admin/courses" action>Course List</ListGroupItem>
-              <Authorization group="acct-managers">
-                <ListGroupItem tag={Link} to="/admin/register" action>Register Trainee</ListGroupItem>
-              </Authorization>
-            </ListGroup>
-          </Authorization>
-        </AuthRequired>
-      </div>
+      <AuthRoute oidc={oidc} roles='cdb.users'>
+        <ListGroup>
+            <ListGroupItem tag={Link} to="/admin/trainees" action>List of Trainees</ListGroupItem>
+            <ListGroupItem tag={Link} to="/admin/courses" action>Course List</ListGroupItem>
+            <AuthRoute oidc={oidc} roles='acct-managers' denied=''>
+              <ListGroupItem tag={Link} to="/admin/register" action>Register Trainees</ListGroupItem>
+            </AuthRoute>
+        </ListGroup>
+      </AuthRoute>
+    </div>
   }
 }
 

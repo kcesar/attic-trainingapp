@@ -23,13 +23,13 @@ namespace Kcesar.Training.Website
     public RolesService(IConfigurationRoot config, IMemoryCache cache, ILogger<RolesService> logger)
     {
       authority = config["auth:authority"].Trim('/');
-      clientId = config["apis:client_id"];
-      clientSecret = config["apis:client_secret"];
+      clientId = config["apis:backend:client_id"];
+      clientSecret = config["apis:backend:client_secret"];
+      scope = config["apis:backend:scopes"];
       url = config["apis:accounts"];
-      scope = config["apis:scopes"];
 
       logger.LogInformation($"Service started. Will query {url} using token from {authority} (client_id={clientId}, scopes={scope})");
-      if (string.IsNullOrWhiteSpace(scope)) logger.LogError("apis:scopes configuration is empty");
+      if (string.IsNullOrWhiteSpace(scope)) logger.LogError("apis:backend:scopes configuration is empty");
       this.cache = cache;
       this.logger = logger;
     }

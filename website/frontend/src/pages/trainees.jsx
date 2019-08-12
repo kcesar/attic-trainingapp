@@ -3,10 +3,8 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { ListGroup, ListGroupItem } from 'reactstrap'
 
+import AuthRoute from '../components/auth/AuthRoute'
 import * as actions from '../actions'
-
-import AuthRequired from '../components/auth-required'
-import Authorization from '../components/authorization'
 
 class TraineesPage extends Component {
   componentDidMount() {
@@ -23,19 +21,17 @@ class TraineesPage extends Component {
     const list = trainees.loaded
      ? (
       <ListGroup>
-        {trainees.items.map(t => <ListGroupItem tag={Link} to={config.localRoot + '/admin/trainees/' + t.member.id} action>{t.member.name}</ListGroupItem>)}
+        {trainees.items.map(t => <ListGroupItem key={t.id} tag={Link} to={config.apis.training.url + '/admin/trainees/' + t.member.id} action>{t.member.name}</ListGroupItem>)}
       </ListGroup>
      ) : <div>Loading ...</div>
 
     return <div className='container-fluid py-4'>
-        <AuthRequired oidc={oidc}>
-          <Authorization allowMember showDenied>
-            <Link to="/admin">&lt; Admin Home</Link>
-            <div>Trainee List</div>
-            {list}
-          </Authorization>
-        </AuthRequired>
-      </div>
+      <AuthRoute oidc={oidc} roles='cdb.users'>
+        <Link to="/admin">&lt; Admin Home</Link>
+        <div>Trainee List</div>
+        {list}
+      </AuthRoute>
+    </div>
   }
 }
 

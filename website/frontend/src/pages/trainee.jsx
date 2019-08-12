@@ -3,24 +3,21 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import * as actions from '../actions'
 
-import AuthRequired from '../components/auth-required'
-import Authorization from '../components/authorization'
+import AuthRoute from '../components/auth/AuthRoute'
 import TaskList from '../components/task-list'
 
 class TraineePage extends Component {
   render() {
-    const { member, oidc } = this.props
+    const { member } = this.props
     return (
       <div className='container-fluid py-4'>
-        <AuthRequired oidc={oidc}>
-          <Authorization allowMember>
-            <div><Link to="/admin/trainees">&lt; Trainees List</Link></div>
-          </Authorization>
-          <Authorization allowSelf allowMember showDenied>
-            <div>{member ? member.name : ''}</div>
-            <TaskList {...this.props} />
-          </Authorization>
-        </AuthRequired>
+        <AuthRoute roles='cdb.users' denied='' loading=''>
+          <div><Link to='/admin/trainees'>&lt; Trainees List</Link></div>
+        </AuthRoute>
+        <AuthRoute self={member.id} roles='cdb.users'>
+          <div>{member ? member.name : ''}</div>
+          <TaskList {...this.props} member={member} />
+        </AuthRoute>
       </div>
     );
   }
@@ -28,7 +25,6 @@ class TraineePage extends Component {
 
 const storeToProps = (store) => {
   return {
-    oidc: store.oidc,
     member: store.member,
     tasks: store.tasks,
     records: store.records,

@@ -8,7 +8,7 @@ import trainees from './reducers/trainees-reducer'
 import schedule from './reducers/schedule-reducer'
 import member from './reducers/member-reducer'
 import roster from './reducers/roster-reducer'
-import oidc from './reducers/oidc-reducer'
+import { reducer as oidc } from './redux/oidc'
 
 const defaultState = {
   oidc: { signedIn: false, user: Object.keys(sessionStorage).filter(function(i) { return i.startsWith('oidc.user')}).length ? {} : null},
@@ -26,7 +26,6 @@ const defaultState = {
       { 'title': 'Background Check', summary: "Sheriff's Office application", category: 'paperwork', details: 'All potential KCESAR members submit an application to the King County Sheriff\'s office, who will conduct a criminal background check on the applicant.\n\nThis status will be updated when we are informed that you have passed this check. KCESAR does not receive the result of the background check except a pass/fail from the sheriff\'s office.' },
       { 'title': 'LFL Registration', summary: "For youth members", category: 'paperwork' },
 //      { 'title': 'Submit Photo', summary: "Submit portrait for ID card", category: 'paperwork' },
-      { 'title': 'Course C', summary: "Outdoor weekend - Intro to SAR", category: 'session', hours: 32.5, prereqs: ['Course B', /*'ESAR F/A - Basic' /*, 'Background Check', 'LFL Registration'*/] },
       { 'title': 'Course I', summary: "Outdoor weekend - Navigation", category: 'session', prereqs: ['Course C'], hours: 31 },
       { 'title': 'Course II', summary: "Outdoor weekend - Evaluation", category: 'session', prereqs: ['Course I'], hours: 31 },
       { 'title': 'ESAR Basic - Searcher First Aid', summary: 'SAR specific first aid and scenarios', category: 'session', hours: 9, prereqs: ['Course II', 'ESAR Basic - Intro to Searcher First Aid']},
@@ -37,11 +36,15 @@ const defaultState = {
   records: { loaded: false, loading: false},
   progress: {},
   config: Object.assign({
-    localRoot: '',
-    remoteRoot: 'http://localhost:4944/api2',
-    authRoot: 'http://localhost:5100',
-    unitId: 'C2F99BB4-3056-4097-9345-4B8797F40E10'
-  }, window.siteConfig)
+    unitId: 'C2F99BB4-3056-4097-9345-4B8797F40E10',
+    ...window.reactConfig,
+    apis:  {
+      data: { url: 'http://localhost:4944/api2' },
+      training: { url: '' },
+      accounts: { url: 'http://localhost:5100' },
+      ...window.reactConfig.apis
+    }
+  })
 }
 
 const middleware = [
@@ -49,7 +52,7 @@ const middleware = [
 ]
 
 if(process.env.NODE_ENV === 'development' || (localStorage && localStorage.showLogging)) {
-	const loggerMiddleware = createLogger();
+	const loggerMiddleware = createLogger({ collapsed: true });
 	middleware.push(loggerMiddleware);
 }
 
