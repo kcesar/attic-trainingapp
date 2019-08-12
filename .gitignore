@@ -5,8 +5,8 @@
 *.user
 *.suo
 
-/src/frontend/coverage
-/src/frontend/build
+/website/frontend/coverage
+/website/frontend/build
 
 log-*.txt
 appsettings.local.json
