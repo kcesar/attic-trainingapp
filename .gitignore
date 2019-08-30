@@ -10,6 +10,7 @@
 
 log-*.txt
 appsettings.local.json
+training-store.db
 
 # misc
 .DS_Store

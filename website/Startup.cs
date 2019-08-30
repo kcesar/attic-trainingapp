@@ -1,22 +1,28 @@
-﻿using System.IO;
-using IdentityServer4.AccessTokenValidation;
+﻿using System;
+using System.Reflection;
 using Kcesar.Training.Website;
 using Kcesar.Training.Website.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using Serilog;
 
 namespace esar_training
 {
   public class Startup
   {
     private readonly ILogger<Startup> logger;
+
+    private bool useMigrations = true;
+
+    // TODO - Figure out how to get this into ApplicationDbContext
+    public static string SqlDefaultSchema { get; private set; } = "trainingapp";
 
     public Startup(IHostingEnvironment env, ILogger<Startup> logger)
     {
@@ -39,7 +45,7 @@ namespace esar_training
     {
       services.AddSingleton(Configuration);
 
-      services.AddDbContext<TrainingContext>(options => options.UseSqlServer(Configuration["database"], o => o.MigrationsHistoryTable("__Migrations", "trainingapp")));
+      AddDatabases(services);
       services.AddMemoryCache();
 
       // Add framework services.
@@ -69,6 +75,8 @@ namespace esar_training
     {
       var hostingEnvironment = app.ApplicationServices.GetService<IHostingEnvironment>();
 
+      InitializeDatabase<TrainingContext>(app);
+
       if (env.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();
@@ -94,6 +102,63 @@ namespace esar_training
           spa.UseReactDevelopmentServer(npmScript: "start");
         }
       });
+    }
+
+    private Action<DbContextOptionsBuilder> AddDatabases(IServiceCollection services)
+    {
+      string connectionString = Configuration.GetValue<string>("database");
+      string migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
+
+      Action<DbContextOptionsBuilder> configureDbAction = sqlBuilder => sqlBuilder.UseSqlServer(connectionString, sql => {
+        sql.MigrationsAssembly(migrationsAssembly);
+        sql.MigrationsHistoryTable("__Migrations", SqlDefaultSchema);
+      });
+      if (connectionString.ToLowerInvariant().StartsWith("filename="))
+      {
+        SqlDefaultSchema = null;
+        useMigrations = false;
+        configureDbAction = sqlBuilder => sqlBuilder.UseSqlite(connectionString, sql => sql.MigrationsAssembly(migrationsAssembly));
+      }
+      services.AddDbContext<TrainingContext>(options =>
+      {
+        options.EnableSensitiveDataLogging();
+        configureDbAction(options);
+      });
+      return configureDbAction;
+    }
+
+    private void InitializeDatabase<T>(IApplicationBuilder app) where T : DbContext {
+      using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+      {
+        bool needTables = false;
+
+        var dbContext = serviceScope.ServiceProvider.GetRequiredService<T>();
+        var database = dbContext.Database;
+            Console.WriteLine("MYMYMYMYMY useMigrations: " + useMigrations);
+
+        if (useMigrations)
+        {
+          // Common case - SQL Server, etc
+          database.Migrate();
+        }
+        else
+        {
+          // Dev / Sqlite database
+          var migrates = database.GetMigrations();
+          var creator = database.GetService<IRelationalDatabaseCreator>();
+          if (!creator.Exists())
+          {
+            creator.Create();
+            needTables = true;
+          }
+
+          Console.WriteLine("MYMYMYMYMY Need tables: " + needTables);
+          if (needTables)
+          {
+            creator.CreateTables();
+          }
+        }
+      }
     }
   }
 }
