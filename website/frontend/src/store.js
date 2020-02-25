@@ -30,7 +30,7 @@ const defaultState = {
       { 'title': 'Course II', summary: "Outdoor weekend - Evaluation", category: 'session', prereqs: ['Course I'], hours: 31 },
       { 'title': 'ESAR Basic - Searcher First Aid', summary: 'SAR specific first aid and scenarios', category: 'session', hours: 9, prereqs: ['Course II', 'ESAR Basic - Intro to Searcher First Aid']},
       { 'title': 'Course III', summary: "Outdoor weekend - mock mission", category: 'session', prereqs: ['ESAR Basic - Searcher First Aid', 'ICS-100', 'ICS-700'], hours: 31 },
-      { 'title': 'ESAR Ops Orientation', summary: 'Information for new graduates about responding to missions, etc.', category: 'session', prereqs: ['Course III'], hours: 2 }
+      { 'title': 'ESAR Ops Orientation', summary: 'Information for new graduates about responding to missions, etc.', category: 'session', prereqs: ['Course III'], hours: 3 }
     ],
   trainees: [],
   records: { loaded: false, loading: false},
