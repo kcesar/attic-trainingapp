@@ -116,7 +116,7 @@ namespace Kcesar.Training.Website.Controllers
       }
       var resetPasswordUrl = _config["auth:authority"].TrimEnd('/') + "/forgotpassword?username=" + account.Value<string>("username");
       string message = ("{name},<br/><br/><p><strong>Congratulations!</strong></p>" +
-                        "<p>We're excited to invite you to be part of the 2019-2020 training class for King County Explorer Search and Rescue (KCESAR).</p>" +
+                        "<p>We're excited to invite you to be part of this year's training class for King County Explorer Search and Rescue (KCESAR).</p>" +
                         "<p><strong>Next steps</strong></p>" +
                         "<ol><li>Check your calendar to ensure you can commit to at least one date for each training course: <a href=\"http://kcesar.org/recruiting.html\">http://kcesar.org/recruiting.html</a>. If you’re unable to attend any of the offerings for each course, you must wait until 2020-2021.</li>" +
                         $"<li>In order to track your progress through the program and register for courses, please use the training portal at <a href=\"https://training.kcesar.org\">https://training.kcesar.org</a>. An account for this system has been created for you with username \"{username}\". You can set the password for this account after visiting the password reset page at <a href=\"{resetPasswordUrl}\">{resetPasswordUrl}</a>.</li></ol>" +
