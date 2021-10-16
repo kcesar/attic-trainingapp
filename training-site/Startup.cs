@@ -73,7 +73,7 @@ namespace Kcesar.TrainingSite
       services.AddSingleton<DatabaseService>();
 
       services.AddAuthentication()
-          .AddGoogle("google", "ESAR Account", options =>
+          .AddGoogle("google", "Google", options =>
           {
             options.ClientId = Configuration["auth:google:client_id"];
             options.ClientSecret = Configuration["auth:google:client_secret"];
