@@ -16,7 +16,8 @@ import { observer } from 'mobx-react';
 import { Alert } from 'reactstrap';
 
 const InnerApp :React.FC<{store: TrainingStore}> = ({store}) => (
-  <Layout>
+  <Layout config={store.config}>
+    <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
     {store.tokenExpired
       ? <Alert color="warning">Session Expired. <a href={`${ApplicationPaths.Login}?returnUrl=${encodeURIComponent(window.location.href)}`} className="alert-link">Login again</a></Alert>
       : <>
@@ -25,7 +26,6 @@ const InnerApp :React.FC<{store: TrainingStore}> = ({store}) => (
         <AuthorizeRoute exact path="/trainee/:id" component={() => <Trainee store={store} />} />
         <Route path='/counter' component={Counter} />
         <AuthorizeRoute path='/fetch-data' component={FetchData} />
-        <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
       </>
     }
   </Layout>

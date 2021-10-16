@@ -24,11 +24,6 @@ namespace Kcesar.TrainingSite.Identity
       this.roles = roles;
     }
 
-    public override Task<SignInResult> ExternalLoginSignInAsync(string loginProvider, string providerKey, bool isPersistent)
-    {
-      return base.ExternalLoginSignInAsync(loginProvider, providerKey, isPersistent);
-    }
-
     public override async Task<SignInResult> ExternalLoginSignInAsync(string loginProvider, string providerKey, bool isPersistent, bool bypassTwoFactor)
     {
       var result = await base.ExternalLoginSignInAsync(loginProvider, providerKey, isPersistent, bypassTwoFactor);
@@ -42,6 +37,8 @@ namespace Kcesar.TrainingSite.Identity
         user.LastLogin = DateTimeOffset.Now;
 
         await UserManager.UpdateAsync(user);
+
+        Logger.LogInformation($"{user.UserName} logged in using external credentials");
       }
       else if (!(result.IsLockedOut || result.IsNotAllowed))
       {
@@ -68,6 +65,7 @@ namespace Kcesar.TrainingSite.Identity
           }
           await UserManager.AddToRolesAsync(user, initRoles);
 
+          Logger.LogInformation($"Auto-registered {user.FirstName} {user.LastName} ({user.Email})");
           result = await base.ExternalLoginSignInAsync(loginProvider, providerKey, isPersistent, bypassTwoFactor);
         }
       }
@@ -76,11 +74,13 @@ namespace Kcesar.TrainingSite.Identity
 
     public override Task SignInAsync(ApplicationUser user, AuthenticationProperties authenticationProperties, string authenticationMethod = null)
     {
+      Logger.LogInformation($"{user.UserName} logged in");
       return base.SignInAsync(user, authenticationProperties, authenticationMethod);
     }
 
     public override Task SignInAsync(ApplicationUser user, bool isPersistent, string authenticationMethod = null)
     {
+      Logger.LogInformation($"{user.UserName} logged in (persistent {isPersistent}");
       return base.SignInAsync(user, isPersistent, authenticationMethod);
     }
   }

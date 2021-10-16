@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
 import { Link } from 'react-router-dom';
-import { LoginMenu } from './api-authorization/LoginMenu';
+import LoginMenu from './api-authorization/LoginMenu';
 import './NavMenu.css';
+import { observer } from 'mobx-react';
+import { SiteConfig } from '../models/siteConfig';
 
-export class NavMenu extends Component<{}, {collapsed:boolean}> {
+export class NavMenu extends Component<{config: SiteConfig}, {collapsed:boolean}> {
   static displayName = NavMenu.name;
 
-  constructor (props: {}) {
+  constructor (props: {config: SiteConfig}) {
     super(props);
 
     this.toggleNavbar = this.toggleNavbar.bind(this);
@@ -31,16 +33,10 @@ export class NavMenu extends Component<{}, {collapsed:boolean}> {
             <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
             <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed} navbar>
               <ul className="navbar-nav flex-grow">
-                <NavItem>
-                  <NavLink tag={Link} className="text-dark" to="/">Home</NavLink>
-                </NavItem>
                 {/* <NavItem>
-                  <NavLink tag={Link} className="text-dark" to="/counter">Counter</NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink tag={Link} className="text-dark" to="/fetch-data">Fetch data</NavLink>
+                  <NavLink tag={Link} className="text-dark" to="/">Home</NavLink>
                 </NavItem> */}
-                <LoginMenu>
+                <LoginMenu config={this.props.config}>
                 </LoginMenu>
               </ul>
             </Collapse>
@@ -50,3 +46,6 @@ export class NavMenu extends Component<{}, {collapsed:boolean}> {
     );
   }
 }
+
+
+export default observer(NavMenu);

@@ -9,14 +9,16 @@ import { TrainingRecord } from './models/trainingRecord';
 import { TaskProgress } from './models/taskProgress';
 import { Completed } from './models/completed';
 import { Schedule } from './models/schedule';
+import { SiteConfig } from './models/siteConfig';
 
 export class TrainingStore {
   @observable tokenExpired: boolean = false;
-
+  @observable config: SiteConfig = { canRegister: false };
   @observable schedule :Schedule = {};
   @observable taskList :TrainingTask[];
   @observable user?: User;
 
+  @observable loadingTrainee: boolean = false;
   @observable viewTrainee?: Trainee;
   @observable progress: { [taskTitle: string]: any; } = {};
 
@@ -48,11 +50,17 @@ export class TrainingStore {
       { 'title': 'Course III', summary: "Outdoor weekend - mock mission", category: 'session', prereqs: ['ESAR Basic - Searcher First Aid', 'ICS-100', 'ICS-700'], hours: 31 },
       { 'title': 'ESAR Ops Orientation', summary: 'Information for new graduates about responding to missions, etc.', category: 'session', prereqs: ['Course III'], hours: 3 }
     ];
+
+    onBecomeObserved(this, 'config', async () => {
+      const r = await this.apiGet<SiteConfig>("/_configuration/site");
+      runInAction(() => this.config = r);
+    })
   }
 
   @action.bound
   async loadTrainee(traineeId?: string) {
     try {
+      this.loadingTrainee = true;
       if (!traineeId) traineeId = this.user?.profile.sub;
 
       var t :Trainee|undefined = await this.apiGet<Trainee|undefined>(`/api/trainees/${traineeId}`);
@@ -62,6 +70,7 @@ export class TrainingStore {
         this.viewTrainee = t;
         this.progress = {};
         this.schedule = {};
+        this.loadingTrainee = !!t;
       });
 
       if (!t) return;
@@ -104,6 +113,7 @@ export class TrainingStore {
         runInAction(() => this.tokenExpired = true);
       }
     }
+    runInAction(() => this.loadingTrainee = false);
   }
   
   private async apiGet<T>(url: string) {

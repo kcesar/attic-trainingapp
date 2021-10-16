@@ -13,13 +13,14 @@ export const TraineePage :React.FC<{store:TrainingStore}> = ({store}) => {
     store.loadTrainee(id);
   }, [id, store]);
 
+  let body = <TaskList tasks={store.taskList} progress={store.progress} schedule={store.schedule} />;
+  if (!store.viewTrainee) body = <div>No Training Information</div>;
+  if (store.loadingTrainee) body = <div>Loading ...</div>;
+
   return (
-    store.viewTrainee
-    ? <div className='container-fluid py-4'>
-      {store.viewTrainee?.name}
-      <TaskList tasks={store.taskList} progress={store.progress} schedule={store.schedule} />
+    <div className='container-fluid py-4'>
+      {body}
     </div>
-    : <div>No Training Information</div>
   );
 }
 

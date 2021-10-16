@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
+import { observer } from 'mobx-react';
 import { Container } from 'reactstrap';
-import { NavMenu } from './NavMenu';
+import NavMenu from './NavMenu';
+import { SiteConfig } from '../models/siteConfig';
 
-export class Layout extends Component {
+export class Layout extends Component<{config: SiteConfig}> {
   static displayName = Layout.name;
 
   render () {
     return (
       <div>
-        <NavMenu />
+        <NavMenu config={this.props.config} />
         <Container>
           {this.props.children}
         </Container>
@@ -16,3 +18,5 @@ export class Layout extends Component {
     );
   }
 }
+
+export default observer(Layout);
