@@ -12,7 +12,7 @@ export interface InfoPopupProps {
   progress: {[title:string]: TaskProgress }
 }
 
-export class InfoPopup<T extends InfoPopupProps> extends Component<T> {
+export class InfoPopup<T extends InfoPopupProps, S = {}> extends Component<T, S> {
   render() {
     const { task } = this.props
     const pBody = this.renderProgress()

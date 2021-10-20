@@ -1,4 +1,4 @@
-import { observable, action, makeObservable, runInAction, computed, toJS, onBecomeObserved } from 'mobx';
+import { observable, action, makeObservable, runInAction, onBecomeObserved } from 'mobx';
 import { TrainingTask } from './models/task';
 
 import authService from './components/api-authorization/AuthorizeService';
@@ -21,6 +21,9 @@ export class TrainingStore {
   @observable loadingTrainee: boolean = false;
   @observable viewTrainee?: Trainee;
   @observable progress: { [taskTitle: string]: any; } = {};
+
+  @observable joiningSession: boolean = false;
+  @observable leavingSession: boolean = false;
 
   constructor() {
     makeObservable(this);
@@ -74,8 +77,6 @@ export class TrainingStore {
       });
 
       if (!t) return;
-      
-  console.log(this.viewTrainee)
 
       const c = (await this.apiGet<{items: TrainingRecord[]}>(`/api/trainees/${traineeId}/completed`)).items
                   .reduce((accum, cur) => ({...accum, [cur.course.name]: cur}), {} as Completed);
@@ -116,13 +117,35 @@ export class TrainingStore {
     runInAction(() => this.loadingTrainee = false);
   }
   
+  @action.bound
+  async startJoin(sessionId: number) {
+    this.joiningSession = true;
+    return new Promise((resolve, reject) => {
+      window.setTimeout(() => {
+        runInAction(() => this.joiningSession = false);
+        resolve('some join msg');
+      }, 1000);
+    })
+  }
+
+  @action.bound
+  async startLeave(sessionId: number) {
+    this.leavingSession = true;
+    return new Promise((resolve, reject) => {
+      window.setTimeout(() => {
+        runInAction(() => this.leavingSession = false);
+        resolve('some msg');
+      }, 1000);
+    })
+  }
+
   private async apiGet<T>(url: string) {
     return await fetch(url, {
       headers: { Authorization: `Bearer ${await authService.getAccessToken()}`}
     })
     .then(async response => {
       if (!response.ok) {
-        if (response.status == 401) {
+        if (response.status === 401) {
           throw { expiredToken: true, message: "Your session is expired." }
         }
         throw { message: 'Bad response' };

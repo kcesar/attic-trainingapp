@@ -6,7 +6,6 @@ import { ListItem } from "./List"
 export interface TaskListItemProps {
   task: TrainingTask;
   schedule: Schedule;
-  member: any;
   onPick: (task: TrainingTask) => void;
 }
 
