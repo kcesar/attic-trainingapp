@@ -37,8 +37,7 @@ export class AuthorizeService {
         }
 
         await this.ensureUserManagerInitialized();
-      const user = await this.userManager.getUser();
-      console.log(user);
+        const user = await this.userManager.getUser();
         return user && user.profile;
     }
 

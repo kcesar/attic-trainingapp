@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import { Layout } from './components/Layout';
-import { FetchData } from './components/FetchData';
-import { Counter } from './components/Counter';
 import AuthorizeRoute from './components/api-authorization/AuthorizeRoute';
 import ApiAuthorizationRoutes from './components/api-authorization/ApiAuthorizationRoutes';
 import { ApplicationPaths } from './components/api-authorization/ApiAuthorizationConstants';
@@ -24,8 +22,6 @@ const InnerApp :React.FC<{store: TrainingStore}> = ({store}) => (
         <Route exact path='/' component={Home} />
         <AuthorizeRoute exact path='/me' component={() => <Trainee store={store} />} />
         <AuthorizeRoute exact path="/trainee/:id" component={() => <Trainee store={store} />} />
-        <Route path='/counter' component={Counter} />
-        <AuthorizeRoute path='/fetch-data' component={FetchData} />
       </>
     }
   </Layout>

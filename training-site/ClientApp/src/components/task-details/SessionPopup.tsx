@@ -1,6 +1,5 @@
 import { ListGroup, ListGroupItem } from 'reactstrap'
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
-//import { Gateway } from 'react-gateway'
 import moment from 'moment'
 
 import { InfoPopup, InfoPopupProps } from './infoPopup'
@@ -12,12 +11,7 @@ import { TrainingStore } from '../../store'
 
 export interface SessionPopupProps extends InfoPopupProps {
   store: TrainingStore,
-  schedule?: ScheduledCourse[],
-  trainee: Trainee,
-  actions: {
-    doLeaveSession?: () => void,
-    doJoinSession?: () => void
-  }
+  trainee: Trainee
 }
 
 export interface SessionPopupState {
@@ -47,7 +41,7 @@ class SessionPopup extends InfoPopup<SessionPopupProps, SessionPopupState> {
 
   onConfirmLeave = () => {
     this.setState({leaving: true})
-    this.props.store.startLeave(this.state.leavePrompt!.id)
+    this.props.store.leaveSession(this.state.leavePrompt!.id)
     .then(msg => {
       if (msg) alert(msg);
       this.setState({ leavePrompt: undefined })
@@ -60,7 +54,7 @@ class SessionPopup extends InfoPopup<SessionPopupProps, SessionPopupState> {
 
   onClickJoin = (session: ScheduledCourse) => {
     this.setState({joining: true, joinPrompt: session})
-    this.props.store.startJoin(session.id)
+    this.props.store.joinSession(session.id)
     .then(msg => {
       if (msg) alert(msg);
       this.setState({ joinPrompt: undefined })
@@ -76,9 +70,10 @@ class SessionPopup extends InfoPopup<SessionPopupProps, SessionPopupState> {
   }
 
   renderProgress() {
-    const {task, schedule, progress, trainee, store} = this.props
+    const {task, progress, trainee, store} = this.props
 
     const user = store.user!
+    const schedule = store.schedule?.[task.title] ?? [];
 
     const baseContent = super.renderProgress()
     const prog = progress[task.title]

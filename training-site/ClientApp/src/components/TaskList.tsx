@@ -23,8 +23,7 @@ export const TaskList :React.FC<{tasks: TrainingTask[], progress: {[title:string
     if (task.category === 'paperwork') return (<InfoPopup task={task} record={p} progress={progress} />);
     else if (task.category === 'online') return (<OnlineInfo task={task} record={p} progress={progress} />);
     else if (task.category === 'session') {
-      const actions = /*task.category === 'session' ? { doLeave: this.props.doLeaveSession, doJoin: this.props.doJoinSession } :*/ {};
-      return (<SessionPopup task={task} record={p} progress={progress} schedule={schedule[task.title]} actions={actions} store={store} trainee={trainee} />);
+      return (<SessionPopup task={task} record={p} progress={progress} store={store} trainee={trainee} />);
     }
     return (<div>No Information</div>);
   }

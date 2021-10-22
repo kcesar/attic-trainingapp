@@ -44,6 +44,12 @@ namespace transfer_accounts
 
       using (ApplicationDbContext dbContext = context.GetRequiredService<ApplicationDbContext>())
       {
+        dbContext.Roles.Add(new IdentityRole("members"));
+        dbContext.Roles.Add(new IdentityRole("trainees"));
+        dbContext.Roles.Add(new IdentityRole("admins"));
+        dbContext.SaveChanges();
+        var rolesLookup = dbContext.Roles.ToDictionary(f => f.Name, f => f.Id);
+
         using (var authContext = new AuthSiteContext(builder.Options))
         {
           var logins = authContext.Logins
@@ -81,6 +87,7 @@ namespace transfer_accounts
             };
 
             dbContext.Users.Add(newUser);
+            dbContext.UserRoles.Add(new IdentityUserRole<string> { RoleId = rolesLookup["trainees"], UserId = newUser.Id });
             if (logins.TryGetValue(user.Id, out List<IdentityUserLogin<string>> externals))
             {
               dbContext.UserLogins.AddRange(externals);
@@ -106,7 +113,9 @@ namespace transfer_accounts
     {
       get
       {
-        return values[key];
+        if (values.ContainsKey(key))
+          return values[key];
+        return null;
       }
       set
       {

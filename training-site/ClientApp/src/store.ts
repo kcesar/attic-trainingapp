@@ -118,30 +118,43 @@ export class TrainingStore {
   }
   
   @action.bound
-  async startJoin(sessionId: number) {
+  async joinSession(sessionId: number) {
     this.joiningSession = true;
-    return new Promise((resolve, reject) => {
-      window.setTimeout(() => {
-        runInAction(() => this.joiningSession = false);
-        resolve('some join msg');
-      }, 1000);
-    })
+    try {
+      const newSchedule = await this.apiGet<any>(
+        `/api/schedule/${this.viewTrainee?.id}/session/${sessionId}`,
+        { method: 'POST' }
+      );
+      runInAction(() => {
+        this.schedule = newSchedule.items;
+      })
+      return 'Registered Successfully';
+    } finally {
+      runInAction(() => this.joiningSession = false);
+    }
   }
 
   @action.bound
-  async startLeave(sessionId: number) {
+  async leaveSession(sessionId: number) {
     this.leavingSession = true;
-    return new Promise((resolve, reject) => {
-      window.setTimeout(() => {
-        runInAction(() => this.leavingSession = false);
-        resolve('some msg');
-      }, 1000);
-    })
+    try {
+      const newSchedule = await this.apiGet<any>(
+        `/api/schedule/${this.viewTrainee?.id}/session/${sessionId}`,
+        { method: 'DELETE'}
+      );
+      runInAction(() => {
+        this.schedule = newSchedule.items;
+      });
+      return 'Completed Successfully';
+    } finally {
+      runInAction(() => this.leavingSession = false);
+    }
   }
 
-  private async apiGet<T>(url: string) {
+  private async apiGet<T>(url: string, config?: RequestInit) {
     return await fetch(url, {
-      headers: { Authorization: `Bearer ${await authService.getAccessToken()}`}
+      headers: { Authorization: `Bearer ${await authService.getAccessToken()}`},
+      ...config
     })
     .then(async response => {
       if (!response.ok) {

@@ -22,6 +22,14 @@ namespace Kcesar.TrainingSite.Identity
       }
     }
 
+    public async Task AssertIsAdminOrSelf(ClaimsPrincipal user, string traineeId)
+    {
+      if (!await IsInRole(user, "admins") && !IsSelf(user, traineeId))
+      {
+        throw new HttpResponseException(403, "Insufficient permission");
+      }
+    }
+
     public async Task<bool> IsInRole(ClaimsPrincipal user, string role)
     {
       var u = await users.FindByIdAsync(user.FindFirstValue(ClaimTypes.NameIdentifier));

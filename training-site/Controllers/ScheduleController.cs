@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Kcesar.TrainingSite.Data;
+using Kcesar.TrainingSite.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ namespace Kcesar.TrainingSite.Controllers
   [Route("/api/schedule")]
   public class ScheduleController : Controller
   {
+    private readonly AuthorizationService authz;
     private readonly ApplicationDbContext db;
 
     class OfferingWithCounts
@@ -22,8 +24,9 @@ namespace Kcesar.TrainingSite.Controllers
       public int Waiting { get; set; }
     }
 
-    public ScheduleController(ApplicationDbContext db)
+    public ScheduleController(AuthorizationService authz, ApplicationDbContext db)
     {
+      this.authz = authz;
       this.db = db;
     }
 
@@ -44,25 +47,62 @@ namespace Kcesar.TrainingSite.Controllers
     [HttpGet("{traineeId}")]
     public async Task<object> GetForMember(string traineeId)
     {
-      //string userMemberId = User.FindFirst("memberId").Value;
-      //var roles = rolesSvc.ListAllRolesForAccount(new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
-      //bool isMember = roles.Contains("sec.esar.members");
-
-      //if (!isMember && !string.Equals(userMemberId, memberId, StringComparison.OrdinalIgnoreCase)) throw new Exception("user can't see other persons schedule");
+      await authz.AssertIsMemberOrSelf(User, traineeId);
 
       var user = await db.Users.SingleOrDefaultAsync(f => f.Id == traineeId);
       if (user == null) throw new HttpResponseException(404, "Not found");
 
 
-      string memberId = user.DatabaseId;
-
-      //memberId ??= User.FindFirst("memberId").Value;
-
       var sessions = await GetOfferingsQuery(db.Offerings.AsNoTracking()).ToListAsync();
-      var signups = await db.Signups.AsNoTracking().Where(f => f.MemberId == memberId && !f.Deleted).ToListAsync();
+      var signups = await db.Signups.AsNoTracking().Where(f => f.MemberId == user.Id && !f.Deleted).ToListAsync();
 
       return TransformSessionList(sessions, signups);
     }
+
+    [HttpPost("/api/schedule/{traineeId}/session/{sessionId}")]
+    public async Task<object> Register(string traineeId, int sessionId)
+    {
+      await authz.AssertIsAdminOrSelf(User, traineeId);
+
+      var offer = await GetOfferingsQuery(db.Offerings.AsNoTracking().Where(f => f.Id == sessionId)).SingleOrDefaultAsync();
+      if (offer == null) throw new Exception("Session not found");
+      var existing = await db.Signups.AsNoTracking().Where(f => f.MemberId == traineeId && f.Offering.CourseName == offer.O.CourseName && !f.Deleted).ToListAsync();
+
+      if (existing.Any(f => f.OfferingId == sessionId)) throw new Exception("Already registered for this session");
+
+      bool isWaitList = offer.Waiting > 0 || offer.Current >= offer.O.Capacity;
+
+      db.Signups.Add(new CourseSignup
+      {
+        Created = DateTimeOffset.UtcNow,
+        MemberId = traineeId,
+        Name = "",
+        OfferingId = sessionId,
+        OnWaitList = isWaitList
+      });
+      await db.SaveChangesAsync();
+
+      return await GetForMember(traineeId);
+    }
+
+    [HttpDelete("/api/schedule/{traineeId}/session/{sessionId}")]
+    public async Task<object> Leave(string traineeId, int sessionId)
+    {
+      await authz.AssertIsAdminOrSelf(User, traineeId);
+
+      var offer = await GetOfferingsQuery(db.Offerings.AsNoTracking().Where(f => f.Id == sessionId)).SingleOrDefaultAsync();
+      if (offer == null) throw new Exception("Session not found");
+
+      var existing = await db.Signups.Where(f => f.MemberId == traineeId && f.Offering.Id == sessionId && !f.Deleted).FirstOrDefaultAsync();
+      if (existing == null) throw new Exception("Signup not found");
+
+      existing.Deleted = true;
+      await db.SaveChangesAsync();
+
+
+      return await GetForMember(traineeId);
+    }
+
 
     private static object TransformSessionList(List<OfferingWithCounts> sessions, List<CourseSignup> signups)
     {
