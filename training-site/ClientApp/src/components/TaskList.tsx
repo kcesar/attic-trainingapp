@@ -16,7 +16,7 @@ class OnlineInfo extends InfoPopup {
 export const TaskList :React.FC<{tasks: TrainingTask[], progress: {[title:string]: TaskProgress}, schedule: Schedule, trainee: Trainee, store:TrainingStore}>
  = ({tasks, progress, schedule, trainee, store}) => {
   const [infoOpen, setInfoOpen] = React.useState<boolean>(false);
-  const [infoTitle, setInfoTitle] = React.useState<string>('');
+  const [infoTitle /*, setInfoTitle*/] = React.useState<string>('');
   const [infoBody, setInfoBody] = React.useState<React.ReactNode>(undefined);
 
   function buildInfoBody(task: TrainingTask, p: TaskProgress) {

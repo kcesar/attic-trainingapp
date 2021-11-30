@@ -5,13 +5,15 @@ import { User } from "oidc-client";
 export interface AuthorizedProps {
   user: User
   component?: any
-  denied?: string
+  denied?: string|React.ReactNode
   roles?: string|string[]
   self?: string
 }
 
 export const Authorized :React.FC<AuthorizedProps> = ({component: Component, children, denied, user, roles, self, ...rest}) => {
-  const selfCheck = self === user.profile.databaseId
+  if (!user?.profile) return (<div>Loading user information ...</div>);
+
+  const selfCheck = self && (self === user.profile.databaseId);
   let rolesList = roles ? (Array.isArray(roles) ? roles : [roles]) : [];
   let userRoles = user.profile.role ? (Array.isArray(user.profile.role) ? user.profile.role : [user.profile.role]) : [];
 

@@ -9,9 +9,11 @@ import './App.css'
 
 import Home from './pages/HomePage';
 import Trainee from './pages/TraineePage';
+import AdminHome from './pages/admin';
 import { TrainingStore } from './store';
 import { observer } from 'mobx-react';
 import { Alert } from 'reactstrap';
+import Authorized from './components/Authorized';
 
 const InnerApp :React.FC<{store: TrainingStore}> = ({store}) => (
   <Layout config={store.config}>
@@ -22,6 +24,11 @@ const InnerApp :React.FC<{store: TrainingStore}> = ({store}) => (
         <Route exact path='/' component={Home} />
         <AuthorizeRoute exact path='/me' component={() => <Trainee store={store} />} />
         <AuthorizeRoute exact path="/trainee/:id" component={() => <Trainee store={store} />} />
+        <AuthorizeRoute path="/admin" >
+          <Authorized user={store.user!} roles="admins" denied={<div>You are not an admin</div>}>
+            <AdminHome store={store} />
+          </Authorized>
+        </AuthorizeRoute>
       </>
     }
   </Layout>

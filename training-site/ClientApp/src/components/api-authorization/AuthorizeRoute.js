@@ -28,6 +28,13 @@ export default class AuthorizeRoute extends Component {
         const redirectUrl = `${ApplicationPaths.Login}?${QueryParameterNames.ReturnUrl}=${encodeURIComponent(returnUrl)}`
         if (!ready) {
             return <div></div>;
+        } else if (this.props.children) {
+            const { children, component, ...rest } = this.props;
+            return (
+                <Route {...rest}>
+                    {authenticated ? children : <Redirect to={redirectUrl} />}
+                </Route>
+            );
         } else {
             const { component: Component, ...rest } = this.props;
             return <Route {...rest}

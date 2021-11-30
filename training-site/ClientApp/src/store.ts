@@ -151,7 +151,7 @@ export class TrainingStore {
     }
   }
 
-  private async apiGet<T>(url: string, config?: RequestInit) {
+  async apiGet<T>(url: string, config?: RequestInit) {
     return await fetch(url, {
       headers: { Authorization: `Bearer ${await authService.getAccessToken()}`},
       ...config

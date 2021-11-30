@@ -103,6 +103,31 @@ namespace Kcesar.TrainingSite.Controllers
       return await GetForMember(traineeId);
     }
 
+    [HttpGet("/api/sessions/{sessionId}/roster")]
+    public async Task<object> GetRoster(int sessionId)
+    {
+      if (!(await authz.IsInRole(User, "admins"))) throw new HttpResponseException(403, "Insufficient permission");
+
+      var signups = await db.Signups.AsNoTracking()
+                      .Where(s => s.OfferingId == sessionId && s.Deleted == false)
+                      .Join(db.Users.AsNoTracking(), s => s.MemberId, u => u.DatabaseId, (s, u) => new {
+        Id = s.Id,
+        CapApplies = s.CapApplies,
+        Created = s.Created,
+        MemberId = s.MemberId,
+        OfferingId = s.OfferingId,
+        OnWaitList = s.OnWaitList,
+        FirstName = u.FirstName,
+        LastName = u.LastName,
+        Email = u.Email,
+        Phone = u.PhoneNumber,
+      })
+      .OrderBy(f => f.OnWaitList)
+      .ToListAsync();
+
+      return signups;
+    }
+
 
     private static object TransformSessionList(List<OfferingWithCounts> sessions, List<CourseSignup> signups)
     {
